@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+
+
+
+
+
+<script>
+
+	//--------------------------------------------
+	// Array 객체 생성하고 객체의메모리위치주소값을 students에 저장하기
+	//--------------------------------------------
+	var students = [] ; // 옆 코딩은 오른쪽과 동일 → var students = new Array( );			/// Array 객체를 쓰는 이유: n개의 데이터를 한 번에 체계적으로 관리하기 위해
+
+
+
+	// Array 객체 안에 Object 객체 4개를 저장
+	students.push( { s_no:1, s_name:"서인우", kor:90, eng:55, mat:88} );
+	students.push( { s_no:2, s_name:"클레어", kor:100, eng:99, mat:79} );
+	students.push( { s_no:3, s_name:"정준하", kor:90, eng:88, mat:78} );
+	students.push( { s_no:4, s_name:"토마스", kor:100, eng:100, mat:99} );
+    students.push( { s_no:5, s_name:"인태희", kor:100, eng:100, mat:99} );
+
+	// "서인우"이라는 이름을 꺼낼 때.. 어떻게 꺼내야하는가?
+	document.write( students[0].s_name + "<hr>" );			/// (Array객체의메모리위치주소값.속성변수) 하는 거임.
+    
+
+	//--------------------------------------------------
+	// 반복문을 사용하여 Array 객체 안에 배열변수 안에 저장된 
+	// Object 객체에 avg라는 속성변수 추가
+	// 속성변수 avg 안에 평균 저장
+	//--------------------------------------------------
+	/// 평균 점수가 제일 높은 사람이 제일 먼저 오도록 (클레어가 Array 객체 순서가 0번이 되도록) 바꾸는 방법. (평균점수 오름차순)
+
+	for(var i=0 ; i<students.length ; i++) {		/// 반복문이 돌면서 배열변수를 지칭하게 해야함
+
+		 students[i].avg = (students[i].kor + students[i].eng + students[i].mat)/3;
+
+    }
+
+
+	//--------------------------------------------------
+	// 반복문을 사용하여 Array 객체 안에 배열변수 안에 저장된 
+	// 각각의 Object 객체에 avg라는 속성변수 비교하여
+	// avg안에 들어있는 데이터 즉 평균이 제일 높은 순서대로
+	// 배열변수 안의 Object 객체의 위치를 교환하기
+	// 이 때 selection sort 방법을 이용한다.
+	//--------------------------------------------------
+
+	var avg1, avg2, tmp;
+
+
+	for(var i=0 ; i<students.length-1 ; i++) {		/// 마지막 번호에서 -1을 해야 정확한 Array 객체의 배열 순서에 맞게 비교할 수 있음.
+
+		for(var j=i+1 ; j<students.length ; j++){	///  j=i+1 해서 0과 1을 비교하기
+
+		// i번째 배열변수 안 → Object 객체의 avg 변수 → avg1에 저장.
+		// j번째 배열변수 안 → Object 객체의 avg 변수 → avg2에 저장.
+
+		avg1 = students[i].avg;
+		avg2 = students[j].avg;
+
+
+		// 만약 avg1<avg2의 결과가 true면 
+
+		if (avg1<avg2){						/// 내림차순.  (avg1 > avg2)는 오름차순.
+
+			//--------------------------------------------------
+			// i번째 배열변수 안의 Object 객체 메위주와
+			//  j번째 배열변수 안의 Object 객체 메위주를 교환하기
+			//--------------------------------------------------
+			tmp = students[i];
+			students[i] = students[j];
+			students[j] = tmp;
+
+ 		    }
+	    }  /// selection 정렬 방법 (인덱스 0번&1번 비교~~ 하는 식으로 )
+
+    }
+
+
+    var rank, kor1, kor2, eng1, eng2;
+    for(var i=0; i<students.length; i++){
+        rank=0;
+            for(var j=0; j<students.length; j++){
+            if(i==j) {continue; }
+
+        //--------------------------------------------------
+		// i번째 배열변수 안의 Object 객체의 avg 변수 안의 꺼내서 avg1에 저장.
+		// j번째 배열변수 안의 Object 객체의 avg 변수 안의 꺼내서 avg2에 저장.
+		//--------------------------------------------------
+
+		avg1 = students[i].avg;
+		avg2 = students[j].avg;
+
+        kor1 = students[i].kor;
+		kor2 = students[j].kor;
+
+        eng1 = students[i].eng;
+		eng2 = students[j].eng;
+
+		//--------------------------------------------------
+		// <<조건>> "i가 j와 같지 않다."
+        //        근데 avg1<avg2의 결과가 true라면?
+      
+        /// 국어점수가 높은 대로, 
+        /// 국어점수가 같으면 영어점수가 높은 대로.
+        /// 둘 다 같으면 등수가 같아지는 걸로
+		//--------------------------------------------------
+                if ( avg1<avg2 ) {
+
+                    // rank 변수 안의 데이터 1 증가
+                    rank++;   
+                } 
+                else if ( avg1==avg2 && kor1<kor2) {
+                    rank++; 
+                }
+
+                else if ( avg1==avg2 && kor1==kor2 && eng1<eng2) {
+                    rank++; 
+                }
+            }
+            //----------------------------------------------------------------
+            // i 번째 Object 객체에 rank 속성변수 추가 → rank 지역변수에 (데이터+1) → 저장하기
+            //----------------------------------------------------------------
+            students[i].rank = rank+1;
+
+
+        }
+
+
+
+
+    document.write("<table border='1' cellpadding='5'>")
+    document.write("<tr> <th>등수 <th>학생번호 <th>학생이름  <th> 국어   <th>영어   <th>수학   <th>평균")
+    for(var i=0 ; i<students.length ; i++) {
+        document.write ( "<tr><td>" + students[i].rank  + "등"  + "<td>" + students[i].s_no + " <td> " + students[i].s_name 
+                        + " <td> " + students[i].kor +  " <td> " + students[i].eng + " <td> " + students[i].mat +" <td> " + students[i].avg + "<br>"  ) 
+    }
+</script>
+
+
+
+
+</body>
+</html>
