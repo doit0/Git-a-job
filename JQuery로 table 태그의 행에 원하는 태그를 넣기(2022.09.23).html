@@ -1,0 +1,93 @@
+<!-- JQuery를 사용해서 table 태그에 원하는 태그를 넣기-->
+
+
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+
+
+<script src="../../../IT_Lesson/수업예제/JQuery/jquery-1.11.0.min.js"></script>
+<script>
+    //-------------------------------------
+    // body태그를 다 읽어들이고 실행할 익명함수 → 자스 코딩 실행
+    //------------------------------------- 
+    $(function(){
+
+        // 변수 obj 선언,  class="movieList" 를 가진 태그 관리하는 JQuery 객체 생성
+        // 객체의 메모리 위치 주소값을 변수 obj 에 저장.
+        var obj = $(".movieList")
+
+        // 변수 trObj 선언. class="movieList" 태그의 후손 중 tr 태그 관리하는JQuery 객체 생성
+        // 객체의 메모리 위치 주소값을 변수 trObj 에 저장. 
+        var trObj =  obj.find("tr")
+
+        //***************************<<방법 1>>****************************************
+        // 반복문을 사용해서 각각 tr 태그의 순서번호를 첫번째 tr로 삽입하기
+        // 그러기 위해선 우선 태그의 총 개수를 변수 trCnt 에 저장
+        var trCnt = trObj.length;
+
+        for(i=0; i<=trCnt ; i++){
+
+            // 만약 i가 가장 첫번째 태그(th)라면 정순으로 정렬하는 방법
+            if(i==0){
+                trObj.eq(i).prepend("<th>"+" 본 순서로 정렬")
+            }
+           
+            else{
+                trObj.eq(i).prepend("<th>"+ i +" 번째")
+                    /// 역순으로 정렬하는 방법은 
+                    /// trObj.eq(i).prepend("<td>"+ (trCnt-i) );
+            }
+        //*******************************************************************
+
+        //***************************<<방법 2>>****************************************
+        // each 메소드를 사용해서 각 행에 tr 태그를 관리하는 JQuery의 객체의 메모리 위치 주소 값을 얻기.
+        // 현재 태그의 총 개수를 몰라도 익명함수 안의 코딩을 실행하면 된다.
+        trObj.each( function(i){
+            var thisObj = $(this);      /// 첫번째 태그를 잡기
+
+            if(i==0){       /// 제일 위 th 태그
+                thisObj.prepend("<th>" + "본 순서로 정렬")
+            }
+            else {
+                thisObj.prepend("<th>"+i +" 번째")
+                    /// 역순으로 정렬하는 방법은 
+                    /// thisObj.prepend("<td>"+ (trObj.length-i) );   로 하면 된다.                 
+            }
+        })
+        //*******************************************************************
+    
+
+    /// 위의 두 방법 중 한 가지 방법만 사용하면 된다.
+    
+    
+    
+    
+    }
+
+    })
+    
+</script>
+</head>
+<body>
+
+    <table class="movieList" border=1  cellpadding=4 style="border-collapse:collapse">
+		<tr><th bgcolor="skyblue">내가 재밌게 본 영화들
+		<tr><td> 놉
+		<tr><td> 친절한 금자씨
+		<tr><td> 살인의 추억
+		<tr><td> 아가씨
+		<tr><td> 해리포터
+		<tr><td> 헤어질 결심
+		<tr><td> 엔칸토
+		<tr><td> 승리호
+        <tr><td> 반지의 제왕
+        <tr><td> 버드박스
+        <tr><td> 김종욱찾기
+
+	</table>
+
+</body>
+</html>
