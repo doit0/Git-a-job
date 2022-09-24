@@ -1,0 +1,419 @@
+<!-- JQuery로 유효성 체크하기 -->
+
+<!-- JQuery_14.html 발췌-->
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script src="../../../IT_Lesson/수업예제/JQuery/jquery-1.11.0.min.js"></script>
+
+<script>
+    // 문자열 입력 상자 (가입인사란) 에 사용할 공용함수
+    function checkStrLength(obj, maxLength){
+try {       
+        var str = obj.val();
+        str = $.trim(str);
+          
+          // 만약 25자 넘게 입력되면 25자까지만 잘라서 넣어주기
+          if(str.length>=maxLength){
+
+            alert("입력할 수 있는 최대 글자는" + maxLength + "입니다.")
+            str = str.substr(0,maxLength)
+            obj.val(str)
+          }
+    }
+    catch(e){
+        alert(" 함수 checkStrLength 호출 시 예외 발생 " + e.message)
+    }
+}
+
+    //****************************************
+    // body 태그 내부 읽어들인 후 실행시킬 자바스크립트 코딩 → 익명함수 안에 설정하기
+    //****************************************
+    $(function(){
+
+
+        //저장 버튼 클릭하면 유효성 체크하는 함수  checkMemberRegForm () 호출하게 설정
+        $(".save_btn").click(function(){
+            checkMemberRegForm();
+        })
+
+        $(".greeting").keyup(function(){
+                
+            checkStrLength($(this), 25);
+
+                    /*
+                    // greeting 변수에 입력한 문자 저장.
+                    var greeting = thisObj.val();
+
+                    // 앞뒤 공백 제거
+                    greeting = $.trim(greeting);
+                
+                    // 만약 25자 넘게 입력되면 25자까지만 잘라서 넣어주기
+                    if(greeting.length>=25){
+                        greeting = greeting.substr(0,25)
+                        thisObj.val(greeting)
+                    }
+                    */
+        })
+    })
+
+    //****************************************
+    // 회원가입 화면에 입력한 데이터 유효성 체크해주는 함수 checkMemberRegForm 선언
+    //****************************************
+    function checkMemberRegForm(){
+        // 각 태그를 관리하는 JQuery 객체 생성 후 각각 변수에 저장하기.
+        // form 태그가 잡고 들어가는 name 값이나 클래스 값 잊지 말기!!!!!
+        var formObj = $(".memberRegForm");
+        var user_nameObj = formObj.find(".user_name");
+        var user_idObj   = formObj.find(".user_id");
+        var pwdObj       = formObj.find(".pwd");
+        var addressObj   = formObj.find(".address");
+        var genderObj    = formObj.find(".gender");
+        var interestObj  = formObj.find(".interest");
+        var greetingObj  = formObj.find(".greeting");
+        var confirmObj   = formObj.find(".confirm");
+
+
+        //-------------------------------------------------
+        // 회원이 입력한 정보를 변수에 각각 저장하기
+        //-------------------------------------------------
+        var user_name   = user_nameObj.val();
+        var user_id     = user_idObj.val();
+        var pwd         = pwdObj.val();
+        var address     = addressObj.val();
+        var gender      = genderObj.val();
+        var interest    = interestObj.val();
+        var greeting    = greetingObj.val();
+        var confirm     = confirmObj.val();
+
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 이름 유효성 체크 => RegExp 객체를 사용
+        if( new RegExp(/^[가-힣]{2,10}$/).test(user_name)==false){
+            alert("회원 이름은 2~10 글자입니다.");
+        
+        // 유효성 체크에 틀렸을 경우 입력란 비우기
+        user_nameObj.val("");
+
+        //입력란 비운 후 입력란에 마우스 커서 넣기
+        user_nameObj.focus();
+
+        // 함수 중단
+        return;
+        }
+        
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 아이디 유효성 체크 => RegExp 객체를 사용
+        if( new RegExp(/^[a-z][a-z0-9_]{5,11}$/).test(user_id)==false){
+            alert("회원 아이디는 6~12 글자입니다.")
+        
+        // 유효성 체크에 틀렸을 경우 입력란 비우기
+        user_idObj.val("");
+
+        //입력란 비운 후 입력란에 마우스 커서 넣기
+        user_idObj.focus();
+
+        // 함수 중단
+        return;
+        }
+        
+
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 비밀번호 유효성 체크 => RegExp 객체를 사용
+        if( new RegExp(/^[a-z0-9_]{6,12}$/).test(pwd)==false){
+            alert("회원 비밀번호는 6~12 글자입니다.")
+        
+        // 유효성 체크에 틀렸을 경우 입력란 비우기
+        pwdObj.val("");
+
+        //입력란 비운 후 입력란에 마우스 커서 넣기
+        pwdObj.focus();
+
+        // 함수 중단
+        return;
+        }        
+
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 거주지 유효성 체크 
+        if(  addressObj.val() == 0){
+            alert(" 거주지 선택은 필수 항목입니다. ")
+
+        // 함수 중단
+        return;
+        }      
+
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 성별 유효성 체크 
+        if(  genderObj.filter(":checked").length == 0 ){
+            alert(" 성별 선택은 필수 항목입니다. ")
+
+        // 함수 중단
+        return;
+        }           
+
+
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 관심사 유효성 체크 
+        if(  interestObj.filter(":checked").length == 0 ){
+            alert(" 관심사 선택은 적어도 1개 이상 해야합니다. ")
+
+        // 함수 중단
+        return;
+        }   
+
+        //-------------------------------------------------
+        //-------------------------------------------------
+        // 회원 동의 유효성 체크 
+        if(  confirmObj.filter(":checked").length <1 ){
+            alert(" 필수적으로 동의 해야합니다. ")
+
+        // 함수 중단
+        return;
+        }           
+
+
+    }
+
+    // 회원가입 화면에 입력한 데이터들 유효선 체크 해주는 
+    // checkMemberRegForm2 함수 선언하기
+    function checkMemberRegForm2 (){
+        
+        // flag 변수에 함수 checkform 호출 결과 저장. (true : 유효성체크에 문제x. false : 유효성 체크에 문제 ㅇ)
+        var flag = checkform(
+            // form 태그의 name 값 저장.
+            "memberRegForm"
+            
+            // 2번째 인자값으로 다량의 JSON 객체 저장. (입력양식을 저장.)
+            , [{
+                "name"              : "user_name"
+                , "regExp"          : /^[가-힣]{2,10}$/
+                , "checkingCnt"     : 0
+                , "alias"           : "회원 이름"
+                , "msg"             : "회원 이름은 2~10 글자입니다."
+            }
+
+            , {
+                "name"              : "user_id"
+                , "regExp"          : /^[a-z][a-z0-9_]{5,11}$/
+                , "checkingCnt"     : 0
+                , "alias"           : "회원 아이디"
+                , "msg"             : "회원 아이디는 6~12 글자입니다."
+            }      
+
+            , {
+                "name"              : "pwd"
+                , "regExp"          : /^[a-z0-9_]{6,12}$/
+                , "checkingCnt"     : 0
+                , "alias"           : "비밀번호"
+                , "msg"             : "회원 비밀번호는 6~12 글자입니다."
+            }      
+
+            , {
+                "name"              : "address"
+                , "regExp"          : /^.+$/
+                , "checkingCnt"     : 0
+                , "alias"           : "거주지"
+                , "msg"             : "거주지 선택은 필수 항목입니다."
+            }      
+
+
+            , {
+                "name"              : "gender"
+                , "regExp"          : null
+                , "checkingCnt"     : 1
+                , "alias"           : "성별"
+                , "msg"             : "성별 선택은 필수 항목입니다."
+            }     
+
+            , {
+                "name"              : "interest"
+                , "regExp"          : 0
+                , "checkingCnt"     : 1
+                , "alias"           : "관심사"
+                , "msg"             : "관심사 선택은 적어도 1개 이상 해야합니다."
+            }  
+
+            , {
+                "name"              : "greeting"
+                , "regExp"          : /^.{1,25}$/
+                , "checkingCnt"     : 0
+                , "alias"           : "가입인사"
+                , "msg"             : "가입인사는 1~25자 사이입니다."
+            }       
+            
+            , {
+                "name"              : "confirm"
+                , "regExp"          : null
+                , "checkingCnt"     : 1
+                , "alias"           : "동의"
+                , "msg"             : "동의는 필수 항목입니다."
+            }]
+        )
+
+        // 만약 flag에 false 가 있다면 함수 중단.
+        // (유효성 체크에 예외 발생.)
+        if (flag==false){return;}
+
+
+        // confirm 상자 띄워서 "서버로 전송할까요?" 경고 메세지 보여준 후,
+        // 취소 버튼 누르면 false 리턴.
+        if (confirm("서버로 전송할까요?") == false){return;}
+    }
+
+    
+    /// 유효성 체크를 위한 공용함수 checkform 선언
+    function checkform( formName, arr_with_json){
+
+try        
+  {      // 변수 선언
+        var json, regExp, checkingCnt, alias, msg, obj, value;
+
+        var formObj = $("[name=' "+formName+" ']");
+        
+        // 반복문을 통해 매개변수로 들어온 Array 객체 속 JSON 객체에 접근
+        // 유효성 체크에 필요한 데이터 꺼내서 저장.
+        for(var i=0; i<=arr_with_json.length; i++){
+
+            // json 변수에 저장하기
+            json = arr_with_json[i];
+
+            // JSON 객체 내부의 각종 데이터들을 변수에 저장.
+            name        = json["name"];
+            regExp      = json["regExp"];
+            checkingCnt = json["checkingCnt"];
+            alias       = json["alias"];
+            msg         = json["msg"];  
+
+            // 입력 양식 태그를 관리하는 JQuery 객체 생성, 변수 obj에 저자이.
+
+            obj = formObj.find("[name='"+name+"']");
+
+            // 만약에 변수 regExp에 null이 아니고 checkingCnt가 0보다 크면
+            //  개발자에게 경고하기
+            if (regExp!=null && regExp>0){
+                alert(" regExp의 값이 null이 아니고 checkingCnt가 0보다 큽니다")
+            }
+
+
+        // 꺼낸 regExp 객체가 존재한다면          
+        if(regExp!=null){
+            value = obj.val();
+            if(regExp.test(value) == false){
+                alert(msg);
+                obj.val("");
+                obj.focus();
+                return false;
+            }
+        
+        // regExp가 null이라면
+        else {
+            if(obj.filter(":checked").length<checkingCnt){
+                alert(msg);
+                return false;
+                }
+            }
+        }  
+    }
+    
+        }
+    catch(e){
+        alert("checkform 함수 호출시 예외 발생!" + e.message)
+        }       
+
+
+
+}
+
+</script>
+
+</head>
+
+<!--------------------------------------------->
+
+<body><center>
+    <form name="memberRegForm" class="memberRegForm">
+        <table border="1" cellpadding=5 >
+            <caption> 회원가입 입력란</caption>
+            <tr>
+                <th bgcolor="skyblue"> 회원 이름 </th>
+                <td>
+                    <input type="text" name="user_name" size="20" class="user_name"maxlength="15">
+                </td>
+            </tr>
+            <tr>
+                <th bgcolor="skyblue"> 아이디 </th>
+                <td>
+                    <input type="text" name="user_id" size="20" class="user_id" maxlength="15">
+                </td>
+            </tr>
+            <tr>
+                <th bgcolor="skyblue"> 비밀번호 </th>
+                <td>
+                    <input type="password" name="pwd" size="20" class="pwd"maxlength="15">
+                </td>
+            </tr>
+            <tr>
+                <th bgcolor="skyblue"> 거주지</th>
+                <td>
+                  <select name="address" class="address">
+                    <option value="">---- 거주지 선택 ----</option>
+                    <option value="서울">서울</option>
+                    <option value="경기">경기</option>
+                    <option value="광주">광주</option>
+                    <option value="대구">대구</option>
+                    <option value="대전">대전</option>
+                    <option value="울산">울산</option>
+                    <option value="인천">인천</option>
+                    <option value="제주">제주</option>
+                  </select>
+                </td>
+            </tr>
+            <tr>
+                <th bgcolor="skyblue">성별</th>
+                <td>
+                    <input type="radio" name="gender" class="gender" value="남">남
+                    <input type="radio" name="gender" class="gender" value="여">여
+                </td>
+            </tr>                
+            <tr>
+                <th bgcolor="skyblue">관심사</th>
+                <td>
+                    <input type="checkbox" name="interest" class="interest" value="운동">운동
+                    <input type="checkbox" name="interest" class="interest" value="여행">여행
+                    <input type="checkbox" name="interest" class="interest" value="독서">독서
+                    <input type="checkbox" name="interest" class="interest" value="관람">관람
+                    <input type="checkbox" name="interest" class="interest" value="자기개발">자기개발
+                    <input type="checkbox" name="interest" class="interest" value="기타">기타
+                </td>       
+                <tr>
+                    <th bgcolor="skyblue">가입 인사말</th>
+                    <td>
+                        <textarea name="greeting" class="greeting" cols="30" rows="10" ></textarea>
+                                                                                   
+                    </td>
+                </tr>
+                <tr>
+                    <th bgcolor="skyblue">기타</th>
+                    <td>
+                        <input type="checkbox" name="confirm" class="confirm" value="동의">
+                                                                                    동의(가입하신 개인정보는 보관이 됩니다.)
+                    </td>
+                </tr>                                     
+        </table>
+        <!---------------------------------------------------------------->
+		<input type="button"  value="저장" class="save_btn">	
+		<input type="reset"  value="초기화">	<br><br>
+		<!---------------------------------------------------------------->
+		<input type="button"  value="로그인 화면으로" class="to_loginForm_btn">	
+		<!---------------------------------------------------------------->
+    </form>
+</center>    
+</body>
+</html>
