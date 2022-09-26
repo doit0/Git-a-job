@@ -1,0 +1,144 @@
+<!-- 체크박스 반전시키기-->
+
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+
+<script src="../../../IT_Lesson/수업예제/JQuery/jquery-1.11.0.min.js"></script>
+<script>
+		//---------------------------------------------------------------------
+		// body 태그 안의 요소들을 읽어들인 이후 익명함수 내부의 자스코딩을 실행.
+		//---------------------------------------------------------------------
+		$(function(){
+        
+            //---------------------------------------------------------------------
+            // class="reverse" 를 가진 태그를 클릭하면 function( ){~}라는 익명함수 호출하기
+            //---------------------------------------------------------------------
+            
+            //***********
+            // 방법1
+            //***********
+            /*
+            $(".reverse").click( function(){
+                
+                // 메뉴 중에 체크된 태그의 체크를 풀고 체크 안 된 태그는 체크를 넣어주기
+
+                var menuObj = $("[name='menu']");
+                menuObj.each( function(i){
+                    var isChecked = $(this).prop("checked"); 
+                    $(this).prop("checked", !isChecked);            /// true/false를  반전 연산 해주는  !를 사용하는 것. 
+
+
+                })
+
+                */
+            //***********
+            // 방법2
+            //***********
+                /*
+
+                $(".reverse").click( function(){
+                var menuObj = $("[name='menu']");
+                
+                var isChecked = $(this).prop("checked"); 
+
+                    if(isChecked) {
+                        $(this).prop("checked", false)
+
+                    else {
+                        $(this).prop("checked", true)
+                        }
+                })
+                */
+            //***********
+            // 방법3        for문을 쓴다면 eq(i)를 사용해야함.
+            //***********
+            /*
+                $(".reverse").click( function(){
+                var menuCnt = menuObj.length;
+
+                for(var i=0; i<menuCnt; i++){
+
+                    var isChecked = menuObj.eq(i).prop("checked");
+                    menuObj.eq(i).prop("checked", !isChecked); 
+
+                }
+
+            */
+
+            //***********    
+            // 사용할 수 없는 방법     
+            //***********
+            /*
+                $(".reverse").click( function(){
+                var menuObj =  $("[name='menu']");
+
+                menuObj.filter(":checked").prop("checked", false);      
+                menuObj.filter(":not(:checked)").prop("checked", true);        /// 위에서 체크를 풀었던 게 아래에서 다시 체크가 되는 것. 결국 했던 일이 말짱 도루묵이 됨.
+                
+                })
+
+                */
+
+
+            
+
+
+
+            //***********
+            // 방법4               /// 반복문, 조건문을 사용하지 않는 방법
+            //***********
+            $(".reverse").click( function(){
+
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                //메뉴 중에 체크된 태그는 체크를 풀고, 체크 안 된 태그는 체크를 넣어주기
+                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    //--------------------------------------
+					// 변수 menuObj 선언하고 name="menu" 를 가진 태그를 관리하는 
+					// JQuery 객체를 생성하고 객체의 메모리 위치 주소 값을 menuObj 에 저장하기
+					//--------------------------------------
+                    var menuObj =  $("[name='menu']");
+                    //--------------------------------------
+					// 변수 menuChecked 선언하고 name="menu" 를 가진 중에 
+                    // 체크된 태그를 관리하는 JQuery 객체를 생성하고 객체의 메모리 위치 주소 값을 menuObj 에 저장하기
+					//--------------------------------------
+                    var menuChecked = menuObj.filter(":checked");
+                    //--------------------------------------
+					// 변수 menu_notCheckedObj 를 선언하고 name="menu" 를 가진 태그 중에 
+					// 체크된 안 태그를 관리하는 JQuery 객체를 생성해서 메모리 위치 주소 값을 변수 not_checkedObj 에 저장하기
+					//--------------------------------------
+                    var menu_notCheckedObj = menuObj.filter(":not(:checked)");        // 둘 다 콜론(:)이 붙는 선택자라는 것 잊지말기. (콜론이 붙는 선택자는 앞에 조건이 붙은 후에 이와 같은 선택자가 붙는다)
+
+                    //--------------------------------------
+					// 변수 menuChecked 에 저장된 JQuery 객체가 관리하는 태그의 체크를 풀기
+					//--------------------------------------
+                    menuChecked.prop("checked", false);      
+                    
+                    //--------------------------------------
+					// 변수 menu_notCheckedObj 에 저장된 JQuery 객체가 관리하는 태그의 체크를 풀기
+					//--------------------------------------
+                    menu_notCheckedObj.prop("checked", true);        /// 위에서 체크를 풀었던 게 아래에서 다시 체크가 되지 않도록 변수에 담았기 때문에 서로 다른 작업으로 인식. <<사용할 수 없는 방법>>과 같은 일이 일어나지 않는다.
+
+
+                            // 변수 하나 틀려서 엄청 헤맸다...
+                            /// 변수 안에 저장하면 체크가 풀린 상태까지 저장되어있기 때문에 그 다음에 다른 변수에 속하지 않는다. 따라서 메모리 위치 주소 값을 얻고 다른 곳에 저장한다는 것.                
+                })
+		});
+
+</script>
+</head>
+<body>
+
+    <input type="checkbox" name="menu" value="샐러드">샐러드
+	<input type="checkbox" name="menu" value="요거트">요거트
+	<input type="checkbox" name="menu" value="국밥">국밥
+	<input type="checkbox" name="menu" value="스테이크">스테이크
+
+    <!--css or  JQuery 사용하려고 button에 클래스명 부여한다는 것 잊지말기-->
+	<input type="button" value="반전" class="reverse">
+
+</body>
+</html>
+
