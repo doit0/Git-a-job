@@ -201,7 +201,51 @@ from                                                                      --- se
 				, 'nls_date_language=Korean'				
 			) = '4'				---- 요일숫자 (일~토 순서대로 0~6)
 	------------------------------------------------------------------------------
+	
+	
+------------------------------------------------------------------------------
+--- employee 테이블에서 1970년대생 남자 직원이 먼저 나오게 검색하면?					--- 70년대생 이라고만 하면 1970, 2070년대생 다 포함이기 때문에 문제가 디테일하게 나와야함.
+------------------------------------------------------------------------------
+	------------------------------------------------------------------------------
+	select * from employee	
+	where	
+		 substr(jumin_num, 1, 1) = '7'
+		 and
+		( substr(jumin_num, 7, 1) = '1' or substr(jumin_num, 7, 1) = '3')	--- 주민번호 뒤 7자리 중 첫번째가 1, 3(남성)이 나오는 사람을 먼저 연산을 해준 후, 70년대생을 가리는 문제
+	------------------------------------------------------------------------------
+	------------------------------------------------------------------------------
+	select * from employee	
+	where	
+		 substr(jumin_num, 1, 1) = '7' and substr(jumin_num, 7, 1) in ('1', '3')
+	------------------------------------------------------------------------------
+	
+	
+	
+------------------------------------------------------------------------------
+-- employee 테이블에서 직원번호, 직원명, 다가올생일날(년-월-일), 생일 D-day 를 검색해서 출력하면?		
+------------------------------------------------------------------------------				
+select 
 
+	emp_no		"직원번호"
+	, emp_name	"직원명"
+	, to_char(
+		case when sysdate 
+		- to_date( to_char( (sysdate, YYYY)||substr(jumin_num, 3, 4), 'YYYYMMDD'))>0
+			
+			then  to_date( to_char( (sysdate, YYYY)||substr(jumin_num, 3, 4), 'YYYYMMDD'))
+			else to_date( to_char( to_number ((sysdate, YYYY)+1) ||substr(jumin_num, 3, 4), 'YYYYMMDD')) 
+			,  'YYYY-MM-DD') "다가올생일날"
+	
+	, floor(case when sysdate 
+			- to_date( to_char( (sysdate, YYYY)||substr(jumin_num, 3, 4), 'YYYYMMDD'))>0
+		
+		then to_date( to_char( (sysdate, YYYY)||substr(jumin_num, 3, 4), 'YYYYMMDD')) - sysdate
+		else to_date( to_char( to_number ((sysdate, YYYY)+1) ||substr(jumin_num, 3, 4), 'YYYYMMDD')) - sysdate
+			)||일	"생일 D-day"
+
+
+from employee 
+ order by "생일 D-day"
 
 
 
