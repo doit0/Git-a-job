@@ -232,6 +232,50 @@ on c.emp_no = e.emp_no
 and e.dep_no !=10;				 
 				 
 				 
+------------------------------------------------------------------------------				 
+-- 고객번호, 고객명, 담당직원번호, 담당직원명, 담당직원소속부서명, 담당직원연봉등급, 담당직원직속상관명, 담당직원직속상관직급, 직속상관연봉등급   출력하라.
+--	 단, 고객은 다 나와야하고 null은  없음  으로 표시.
+------------------------------------------------------------------------------
+
+	------------------------------------------------------------------------------------------------------------------------------
+  	select 
+		c.cus_no						"고객번호"
+		, c.cus_name						"고객명"
+		, nvl(to_char (e1.emp_no), '없음'	 )		"담당직원번호"		
+		, nvl( e1.emp_name	 , '없음')			"담당직원명"		
+		, nvl( d.dep_name, '없음'	)			"담당직원소속부서명"
+		, nvl( s1.sal_grade_no||'' , '없음'	 )	"담당직원연봉등급"		
+		, nvl(  e2.emp_name , '없음')			"담당직원직속상관명"
+		, nvl( e2.jikup	, '없음' )				"담당직원직속상관직급"
+		, nvl(to_char ( s2.sal_grade_no), '없음'	 )	"직속상관연봉등급"
+	from 
+		customer c, employee e1, dept d, salary_grade s1, employee e2, salary_grade s2
+	where 
+		      c.emp_no = e1.emp_no(+)							]
+		and (e1.salary>=s1.min_salary(+) and e1.salary<=s1.max_salary(+)) 
+		and e1.mgr_emp_no = e2.emp_no(+)
+		and e1.dep_no=d.dep_no(+)
+		and (e2.salary>=s2.min_salary(+) and e2.salary<=s2.max_salary(+)) 
+	order by c.cus_no asc;
+	------------------------------------------------------------------------------------------------------------------------------
 				 
-				 
+	------------------------------------------------------------------------------------------------------------------------------
+		ANSI join
+	------------------------------------------------------------------------------------------------------------------------------
+  	select 
+		c.cus_no							"고객번호"
+		, c.cus_name						"고객명"
+		, nvl(to_char (e1.emp_no), '없음'	 )		"담당직원번호"			
+		, nvl( e1.emp_name	 , '없음')			"담당직원명"			
+		, nvl( d.dep_name, '없음'	)			"담당직원소속부서명"
+		, nvl( s1.sal_grade_no||'' , '없음'	 )	"담당직원연봉등급"			
+		, nvl(  e2.emp_name , '없음')				"담당직원직속상관명"
+		, nvl( e2.jikup	, '없음' )				"담당직원직속상관직급"
+		, nvl(to_char ( s2.sal_grade_no), '없음'	 )	"직속상관연봉등급"
+	from 
+		(((((   customer c left outer join employee e1 on c.emp_no= e1.emp_no )
+		left outer join dept d on e1.dep_no = d.dep_no)
+		left outer join salary_grade s1 on e1.salary between s1.min_salary and s1.max_salary)
+		left outer join employee e2 on e1.mgr_emp_no = e2.emp_no)
+		left outer join salary_grade s2 on e2.salary between s2.min_salary and s2.max_salary)				 
 				 
