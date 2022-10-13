@@ -1,0 +1,75 @@
+// 코딩테스트 처음부터 차근차근 해보기 1일차.
+
+
+//////////////////////////////////
+//3. 두 수의 곱
+//정수 num1, num2가 매개변수 주어집니다. num1과 num2를 곱한 값을 return 하도록 solution 함수를 완성해주세요.
+//////////////////////////////////
+class Solution {
+    public int solution(int num1, int num2) {
+        return num1*num2;
+    }
+}
+
+//////////////////////////////////
+// 4. 정수 num1, num2가 매개변수로 주어질 때, num1을 num2로 나눈 몫을 return 하도록 solution 함수를 완성해주세요.
+//////////////////////////////////
+class Solution {
+    public int solution(int num1, int num2) {
+
+        return num1/num2 ;
+    }
+}
+
+//////////////////////////////////
+// 5. 두 수의 나눗셈
+// 정수 num1과 num2가 매개변수로 주어질 때, num1을 num2로 나눈 값에 1,000을 곱한 후 정수 부분을 return 하도록 soltuion 함수를 완성해주세요
+//////////////////////////////////
+class Solution {
+    public int solution(int num1, int num2) {
+        double answer = (double) num1/num2;
+        answer = answer*1000;
+        return (int) answer;
+    }
+}
+
+
+//////////////////////////////////
+// 6. 숫자 비교하기
+// 정수 num1과 num2가 매개변수로 주어집니다. 두 수가 같으면 1 다르면 -1을 retrun하도록 solution 함수를 완성해주세요.
+//////////////////////////////////
+class Solution {
+    public int solution(int num1, int num2) {
+        if (num1 == num2){
+            return 1;
+        }
+        else { return -1; }
+    }
+}
+
+//////////////////////////////////
+// 배열 두배 만들기
+// 정수 배열 numbers가 매개변수로 주어집니다. numbers의 각 원소에 두배한 원소를 가진 배열을 return하도록 solution 함수를 완성해주세요.
+//////////////////////////////////
+class Solution {
+    public int[] solution(int[] numbers) {
+
+        int[] answer = new int [numbers.length];
+        for( int i=0; i< numbers.length; i++){
+            answer[i] = numbers[i] *2;
+        }
+      return answer;
+    } 
+};
+
+
+/*
+ 오답노트: 
+ for( int i=0; i< numbers.length; i++){
+ 
+ 로 반복문을 작성할 때 
+ int i=0을 int i=1로,
+ i< numbers.length 을  i<=numbers.legnth 로 잘못... 썼다.. 정신차려야지...
+ 
+
+*/
