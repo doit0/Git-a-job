@@ -93,7 +93,16 @@ public class LoginController {
 			// "pwd"라는 파라미터명에 해당하는 파라미터값을 꺼내서 매개변수 pwd 에 저장하고 들어온다.
 			//-----------------------------------------------------
 			, @RequestParam(value="pwd") String pwd		/// 매개변수 오른쪽에 적은 파라미터명 String pwd. 그것의 파라미터값이 매개변수로 들어옴 
-														
+			
+			//-----------------------------------------------------
+			// "is_login"라는 파라미터명에 해당하는 파라미터값을 꺼내서 매개변수 pwd 에 저장하고 들어온다.
+			//-----------------------------------------------------
+			, @RequestParam(value="is_login", required=false) String is_login	/// require= false : 필수 입력양식이 아니라는 의미
+		
+		
+				, HttpSession session		/// HttpSession의 메모리 위치 주소 값을 매개변수 session에 넣어주는 작업을 해줌
+			
+			, HttpServletResponse response		/// HttpServletResponse의  메모리 위치 주소 값을 매개변수  response에 넣어주는 작업을 해줌		
 			
 			) {			/// return 값이 int 임. ModelAndView  객체가 return 되지 않음.  (비동기 방식 사용)
 				
@@ -113,6 +122,42 @@ public class LoginController {
 		//---------------------------------------------------------
 		int loginIdCnt = loginDAO.getCntLogin(map);					/// loginDAO : LoginDAO 인터페이스 구현한 클래스 객체화 후 메위주 저장한 속성변수
 		
+		
+		// 만약  loginIdCnt 변수 안의 데이터가 1이면, 즉 아이디와 암호가 DB 에 있으면 
+			
+		if( loginIdCnt==1 ) {
+				session.setAttribute("mid", mid);
+		
+				if( is_login== null ) {
+					Cookie cookie1 = new Cookie( "mid", null);
+					
+					// Cookie 객체에 저장된 쿠키의 수명은 0 으로 하기
+					cookie1.setMaxAge( 0 );
+					
+					Cookie cookie2 = new Cookie( "pwd", null);
+					
+					// Cookie 객체에 저장된 쿠키의 수명은 0 으로 하기
+					cookie2.setMaxAge( 0 );
+					
+					response.addCookie(cookie1);
+					response.addCookie(cookie2);
+				}
+			
+				// 매개변수 is_login 에 "yes" 이 저장되어 있다면 (= [아이디, 암호 자동 입력] 의사가 있을 경우)
+				else {
+					Cookie cookie1 = new Cookie("mid", mid);
+					// Cookie 객체에 저장된 쿠키의 수명은 60*60*24 로 하기
+					cookie1.setMaxAge( 60*60*24 );
+					
+					Cookie cookie2 = new Cookie("pwd", pwd);
+					// Cookie 객체에 저장된 쿠키의 수명은 60*60*24 로 하기
+					cookie2.setMaxAge( 60*60*24 );
+					
+					response.addCookie(cookie1);
+					response.addCookie(cookie2);
+				}
+		}		
+					
 		return loginIdCnt;
 	/// URL 주소 들어가면서 파라미터명과 파라미터값을 가져오는 방법
 	
