@@ -1,0 +1,85 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"   import="java.util.*"%>
+
+
+<!--JSP 페이지에서 사용할 [사용자 정의 태그]의 한 종류인 [JSTL의 C 코어 태그]를 사용하겠다고 선언-->
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<table border=1 cellpadding=5 style="border-collapse:collapse">
+		
+	<tr bgcolor="skyblue">
+		<th> 번호 </th>  <th> 제목 </th>  <th> 작성자 </th>   <th> 조회수 </th>  <th> 등록일 </th>
+		
+			
+		
+		<%
+		
+		
+		/*
+		<% 를 쓰면 이 안에서는 자바 코딩을 사용할 수 있다. 
+		 HttpServletRequest 객체의 저장된 게시판 목록을 꺼내서 출력하기
+		 
+		 List<Map<String, String>> boardList = (  List<Map<String, String>> ) request.getAttribute( "boardList" );			/// HashMap 과 ArrayList의 수입 코딩이 없을 땐 JSP 페이지에서 클래스를 수입해주는 코딩을 적어야한다.
+		 																		
+		out.println( boardList.size() );	 																
+		
+		if( boardList!=null ){
+			
+			out.println("<caption> 총 개수 : " + boardList.size() + "개 </caption>");
+			
+      // 반복문이 실행되면서 DB에 있는 데이터(게시판 목록)를 각 HashMap 객체 넣는 코딩
+			for (int i=0; i<boardList.size(); i++ ){				/// 자바니까 갯수 구하는 메소드가 size다!! length 가 아니다~~!!!
+				
+				Map<String, String> map = boardList.get(i);
+				String b_no = map.get("b_no");
+				String subject = map.get("subject");
+				String writer = map.get("writer");
+				String readcount = map.get("readcount");
+				String reg_date = map.get("reg_date");
+				
+			/// 자바 코딩 중 if문으로 짝/홀수 줄마다 CSS 주는 방법 (가독성을 위해)
+			//	if (i%2==1){
+			//		out.println( "<tr bgcolor='lightgray'><td>"+ b_no +"<td>" + subject +"<td>" + writer +"<td>" + readcount +"<td>" + reg_date );	 
+			//	}
+			//	else {
+			//		
+			//		out.println( "<tr bgcolor='white'><td>"+ b_no +"<td>" + subject +"<td>" + writer +"<td>" + readcount +"<td>" + reg_date );	 
+			//	}
+			
+			// 삼항연산자 사용해서 css 주는 법
+				out.println( "<tr bgcolor='"+(i%2==1?"lightgray":"white")+"'><td  &nbsp;&nbsp;&nbsp;&nbsp;>"
+			+ b_no +"&nbsp;&nbsp;&nbsp;&nbsp;<td>" + subject +"&nbsp;&nbsp;&nbsp;&nbsp;<td>"
+			+ writer +"&nbsp;&nbsp;&nbsp;&nbsp;<td>" + readcount +"&nbsp;&nbsp;&nbsp;&nbsp;<td>" + reg_date );	
+			}
+		}
+		
+		
+		*/
+		%>
+		<!-- {requestScope.boardList} 중 boardList는  BoardController의  boardList 와 같은 의미이다.      이 모든 EL, JSTL 코드는 내부적으로 결국 자바코드로 바뀐다.  -->
+		<c:forEach var="board" items="${requestScope.boardList}" varStatus="loopTagStatus">   <!--  이 태그가 JSTL 태그. 그 중 c:forEach 가 자바코드 중 반복문임. -->
+			<tr bgcolor="${loopTagStatus.index%2==1?'lightgray':'white'}">
+			<td>${ board.b_no }			</td>		<!-- ($){} 형식으로 쓰는 것이 EL 태그.     (점).뒤에 HashMap 객체의 키값을 넣어준다. -->
+			<td>${ board.subject }		</td>
+			<td>${ board.writer }		</td>
+			<td>${ board.readcount }	</td>
+			<td>${ board.reg_date }		</td>   
+			
+	</c:forEach>
+	</table>
+	
+	
+	
+
+</body>
+</html>
