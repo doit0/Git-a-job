@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ========================================= -->
+<!-- mapper 태그 선언하기 -->
+<!-- [mapper 태그 안의 namespace값] = [인터페이스 저장 패키지경로]  -->
+<!-- ========================================= -->
+<mapper namespace="com.naver.erp.BoardDAO">  <!-- xml 파일 안의 내용이 LoginDAO 인터페이스의 내용과 일치해야함 -->
+
+
+	<select id="getBoardList"  resultType="hashmap">   <!--  select 쿼리에 n행 m열 을 리턴하더라도 resultType 에는 !! 1행의 데이터만 적어줘야함 !!  -->
+													   <!--	 각 행의 데이터가 1개의 HashMap 객체 안으로 들어간다.  
+															여러 개의 HashMap 객체가 1행을 받아들이도록 해도	결국 안 된다. 모든 저장객체를 String으로 담아야하니까 모든 select 의 결과를 모두 >>>문자화<<< 해줘야함.
+														 		
+														 		데이터를 가져온 다음 사용해야한다면 억지로 문자화하는 것 보다는
+														 		alias를 주는 게 좋음!! (길이가 없는 문자데이터를 붙이면 원본을 훼손한다!!) 
+														 		
+														 		
+														 		
+														-->
+		select 
+				b_no||''			as "b_no"
+				, subject			as "subject"
+				, writer			as "writer"
+				, readcount||''		as "readcount"
+				, to_char( reg_date, 	 'YYYY-MM-DD DY AM  HH:MM:SS ' , 'nls_date_language=Korean'	) 		as "reg_date"    <!-- 괄호 넣은 버전으로 숙제 해주기 -->
+				, print_level||''	as "print_level"		<!-- print_level: 들여쓰기 레벨 번호 -->
+				
+
+		from 
+		
+		board 		<!--  select 의 결과문이 List<Map<String, String>> 자료형에 담김.  -->
+		
+		 order by group_no desc, print_no asc
+		
+		
+		<!-- 
+			~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#{mid} 의미
+			~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#{mid}	=> mid 는 현재 참여하고 있는 HashMap 객체의 키값을 의미한다.
+					=> {mid} 는 "mid" 라는 키값에 대응하는 데이터를 리턴하라는 뜻.
+					=>   #   는 리턴하는 데이터가 문자면 앞뒤에 ''(싱글쿼트)를 붙이고
+												 숫자일 경우엔 ''(싱글쿼트)를 붙일 필요 X   
+					    ex)  오라클에서 mid와 pwd의 자료형을 varchar2로 줬으니까!!  싱글쿼트를 붙여야하는 거!!
+					    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+					    
+			~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#{pwd} 의미
+			~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#{pwd}	=> pwd 는 현재 참여하고 있는 HashMap 객체의 키값을 의미한다.
+					=> {pwd} 는 "mid" 라는 키값에 대응하는 데이터를 리턴하라는 뜻.
+					=>   #   는 리턴하는 데이터가 문자면 앞뒤에 ''(싱글쿼트)를 붙이고
+												 숫자일 경우엔 ''(싱글쿼트)를 붙일 필요 X   
+					    ex)  오라클에서 mid와 pwd의 자료형을 varchar2로 줬으니까!!  싱글쿼트를 붙여야하는 거!!
+					    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		    
+		 -->
+	</select>
+
+</mapper>
