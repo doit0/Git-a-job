@@ -39,4 +39,33 @@ public class BoardController {
 		return mav; 
 		
 	}
+	
+	
+	//  가상주소 /boardRegForm.do 로 접근하면 호출되는 메소드 선언
+
+		@RequestMapping (value="/boardRegForm.do")
+		public ModelAndView boardRegForm( ) {		
+			
+		// [ModelAndView 객체] 생성하기
+		// [ModelAndView 객체] 에 [호출할 JSP 페이지명]을 저장하기
+		// [ModelAndView 객체]  리턴하기
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("boardRegForm.jsp");				
+		return mav; 
+		}
+	
+	
+		// /boardRegProc.do 로 접근하면 호출되는 메소드 선언		/// [새글쓰기]에 관련된 모든 데이터를 들고 오는 메소드
+		@RequestMapping ( 											
+				value="/boardRegProc.do"							
+				, method=RequestMethod.POST							
+				, produces="application/json;charset=UTF-8"		
+				)
+		
+		@ResponseBody
+		public int boardRegProc(	
+			BoardDTO boardDTO ){
+		int boardRegCnt = this.boardDAO.insertBoard( boardDTO );	
+		return boardRegCnt;
+		}
 }
