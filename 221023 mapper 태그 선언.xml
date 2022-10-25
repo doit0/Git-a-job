@@ -23,7 +23,15 @@
 				, subject			as "subject"
 				, writer			as "writer"
 				, readcount||''		as "readcount"
-				, to_char( reg_date, 	 'YYYY-MM-DD DY AM  HH:MM:SS ' , 'nls_date_language=Korean'	) 		as "reg_date"    <!-- 괄호 넣은 버전으로 숙제 해주기 -->
+				, to_char(reg_date, 'YYYY')|| '-'
+			 			|| to_char(reg_date, 'MM')|| '-'
+			 			|| to_char(reg_date, 'DD')|| ' ('
+			 			|| to_char(reg_date, 'DY', 'NLS_DATE_LANGUAGE=Korean')|| ') '
+			 			|| to_char(reg_date, 'AM')||' '
+			 			|| to_char(reg_date, 'HH')||':'
+			 			|| to_char(reg_date, 'MI')||':'
+			 			|| to_char(reg_date, 'SS')
+					as "reg_date"
 				, print_level||''	as "print_level"		<!-- print_level: 들여쓰기 레벨 번호 -->
 				
 
@@ -56,5 +64,39 @@
 					    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		    
 		 -->
 	</select>
+
+	
+	
+<insert id="insertBoard" parameterType="com.naver.erp.BoardDTO" >
+
+	insert into board(
+	
+		b_no
+		, subject 
+		,  writer	
+		, readcount
+		, content	
+		, pwd		
+		, email	
+
+		,group_no
+		, print_no
+		, print_level
+	)
+
+	values
+	(
+		(select nvl(max(b_no),0)+1  from board)
+		, #{subject} 			<!--  BoardDTO 객체의 subject 속성변수 안의 값 삽입하기. #이 있으므로 속성변수 안의 값이 문자면 '(싱글쿼트)'를 앞뒤에 붙여준다. -->
+		, #{writer}			
+		, 0
+		, #{content}			
+		, #{pwd}			
+		, #{email}			
+	
+		, (select nvl(max(b_no),0)+1  from board)		<!--  group_no = pk 번호 -->
+		, 0
+		, 0
+	)
 
 </mapper>
