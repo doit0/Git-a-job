@@ -11,7 +11,48 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+
+
+
+<!-- JQuery 라이브러리 수입하기 -->
+<script src = "/js/jquery-1.11.0.min.js"></script>
+<script>
+		// body 태그를 모두 읽어들인 후 실행할 자스 코딩 설정하기
+		$(function(){
+			// 새글 쓰기 버튼을 클릭하면 웹서버에 "/boardRegForm.do"
+		 $(".newRegBtn").bind("click",function(){
+				// location.replace("/boardRegForm.do" );				
+		 
+				
+				// name=boardRegForm 을 가진 form 태그의 action 값 설정하기
+				document.boardRegForm.action="/boardRegForm.do" ;
+
+				// name=boardRegForm 을 가진 form 태그의 method 값 설정하기
+				document.boardRegForm.method="post" ;
+				
+				// name=boardRegForm 을 가진 form 태그의 action 값 해당한 URL 주소로 웹서버 접속하기
+		 		document.boardRegForm.submit();
+		 	})
+		 
+		 /// 검색화면에 있는 검색 조건에 있는 것들이 들어가야하니까 post 방식을 사용해야함.
+		})
+
+	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
+			
+			// location.replace("/BoardDetailForm.do" );			/// 게시판의 상세보기 화면으로 가는 코드   
+			// get 방식을 사용하면 location.replace("/BoardDetailForm.do?b_no="+b_no ); 를 해야함. (form 태그 안만들어도 되는 장점이 있음, 대신 pk 값을 url 주소 뒤에 같이 보내게 됨.)
+		
+			$("[name='boardDetailForm'] [name='b_no']").val(b_no);		/// hidden 태그는 화면에 출력되지 않는다는 보안성이 있어서 신경써야함.
+			
+			document.boardDetailForm.submit();
+			 
+		
+		}
+		
+		
+		
+</script>
+
 </head>
 <body>
 
@@ -79,6 +120,14 @@
 	</table>
 	
 	
+	<form name="boardRegForm" >   <!-- URL 주소인 action 값이 없어도 위에서 줄 수 있음. (document.boardRegForm.action="/boardRegForm.do"; 처럼) -->
+	</form>
+	
+
+	<form name="boardDetailForm" method="post" action="/boardDetailForm.do">
+		<input type="hidden" name="b_no"> 
+	</form>
+
 	
 
 </body>
