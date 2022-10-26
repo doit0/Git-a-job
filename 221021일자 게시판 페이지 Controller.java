@@ -14,6 +14,12 @@ public class BoardController {
 // BoardDAO 인터페이스를 구현한 클래스를 찾아서 객체화해서 속성변수 boardDAO 에 객체의 메모리 위치 주소값을 저장   	
 	@Autowired
 	private BoardDAO boardDAO;	
+	
+인터페이스 BoardService 구현한 객체(BoardServiceImpl 클래스) 의 메위주가 들어있는 boardService.
+  @Autowired
+private BoardService boardService;				
+	
+  
   
   // 가상주소 /boardList.do 로 접근하면 호출되는 메소드 선언
   // get방식과 post 방식 모두 접근 가능. 
@@ -68,4 +74,33 @@ public class BoardController {
 		int boardRegCnt = this.boardDAO.insertBoard( boardDTO );	
 		return boardRegCnt;
 		}
+		
+		
+
+		// /boardDetailForm.do 로 접근하면 호출되는 메소드 선언
+		
+		@RequestMapping ( value="/boardDetailForm.do" )						
+		public ModelAndView boardDetailForm(
+		
+				/// 클릭한 행의 게시판의 고유번호를 requestparam 으로 받지.. boardDTO 로 받을 필요가 없다.
+				@RequestParam(value="b_no") int b_no
+				) {
+
+			// [BoardServiceImpl 객체]의 getBoard 메소드 호출로 [1개의 게시판 글]을 BoardDTO 객체에 담아오기				
+			BoardDTO boardDTO = this.boardService.getBoard( b_no );			
+			/// 만약 boardDTO 에 삭제된 게시물이 있다면 null이 들어가고... 작업 진행이 안됨.
+			
+			
+			//***************************************************
+			// [ModelAndView 객체] 생성하기
+			// [ModelAndView 객체] 에 [호출할 JSP 페이지명]을 저장하기
+			// [ModelAndView 객체]  리턴하기
+			//***************************************************
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("/boardDetailForm.jsp");			/// DB 연동!
+			mav.addObject( "boardDTO", boardDTO );				/// BoardDAO 객체 사이에 boardService 객체가 낀 것.
+
+			return mav;
+		}
+		
 }
