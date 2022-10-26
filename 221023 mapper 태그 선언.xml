@@ -99,4 +99,45 @@
 		, 0
 	)
 
+
+<!-- 조회수 1 증가하는 ( 즉 수정하는) update 문을 내포한 update 태그 선언-->
+
+
+<update  id="updateReadCount" parameterType="int">			
+<!-- 외부에서 참여하는 데이터가 기본형일 경우 : 패키지명이 아닌 기본 자료형을 써주면 된다.-->
+	update
+		board
+		
+	set	
+		readcount = readcount+1				
+	where 
+		b_no=#{b_no}		
+<!-- int 형만 참여할 때 단발성 데이터(int, String, double 등 hashmap이나 DTO 객체가 아닐 때) 는 저렇게 (#){ } 코드 작성하면 된다. -->
+
+</update>
+
+
+<!-- 게시판 1개 글을 검색하는 select 문을 내포한 select 태그 선언-->
+<select id="getBoard" parameterType="int"  resultType="com.naver.erp.BoardDTO"> 
+
+	select 
+	
+		b_no			"b_no"
+		, subject 		"subject"
+		,  writer		"writer"
+		, readcount		"readcount"
+		, content		"content"
+		, pwd			"pwd"
+		, email			"email"
+
+		,group_no		"group_no"
+		, print_no		"print_no"
+		, print_level	"print_level"
+		
+	from board
+	where 
+		b_no=#{b_no}
+
+</select>
+
 </mapper>
