@@ -103,4 +103,61 @@ private BoardService boardService;
 			return mav;
 		}
 		
+			
+		// /boardUpProc.do 로 접근하면 호출되는 메소드 선언		
+		
+		@RequestMapping ( 		
+				value="/boardUpProc.do"							
+				, method=RequestMethod.POST							
+				, produces="application/json;charset=UTF-8"		
+				)
+		
+		@ResponseBody
+		public int boardUpProc(						
+
+				// 파라미터값을 저장할 [BoardDTO 객체]를 매개변수로 선언
+				BoardDTO boardDTO							
+		) {			
+			
+			// BoardServiceImpl 객체의 updateBoard 메소드 호출로 update 된 행의 갯수를 얻기
+			int updateBoardcnt = this.boardService.updateBoard( boardDTO );
+			
+			
+			// 업데이트 된 행의 개수 리턴하기.
+			return updateBoardcnt;
+		}
+		
+		
+		
+		
+		
+		
+			// boardDelProc.do 로 접근하면 호출되는 메소드 선언		/// [삭제]에 관련된 모든 데이터를 들고 오는 메소드
+			@RequestMapping ( 										
+					value="/boardDelProc.do"							
+					, method=RequestMethod.POST							
+					, produces="application/json;charset=UTF-8"		
+					)
+				
+			@ResponseBody							/// 비동기방식으로 접속하는 방법.  ( @ResponseBody )	/// **** 댓글은 누군가를 밀어내서 update가 일어난 후 insert 가 나와야함. 
+			public int boardDelProc(										
+				
+					
+			// 파라미터값을 저장할 [BoardDTO 객체]를 매개변수로 선언
+				BoardDTO boardDTO									/// boardDTO 같은 수정물이 다 들어와야함.삭제할 때 pk 번호와 암호가 필요
+			) {			
+				//System.out.println("boardController.boardDelProc 메소드 호출!");
+				
+				// BoardServiceImpl 객체의 deleteBoard 메소드 호출로 게시판글을 삭제하고 삭제된 행의 개수 얻기
+				int deleteBoardcnt = this.boardService.deleteBoard( boardDTO );
+				
+					
+				//System.out.println("boardController.boardDelProc 메소드 종료~");
+				
+				// 업데이트 된 행의 개수 리턴하기.
+				return deleteBoardcnt;		
+	
+			}		
+				
+		
 }
