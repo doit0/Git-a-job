@@ -140,4 +140,63 @@
 
 </select>
 
+<!-- 삭제/수정할 게시판의 존재개수를 리턴하는 select 문을 내포한 select 태그 선언-->
+<select id="getBoardCnt" parameterType="int"  resultType="int"> 
+
+	select 
+		count(*)
+		
+	from board
+	where 
+		b_no=#{b_no}		<!--  외부에서 참여하는 데이터가 뭐인지 잘 생각하고 where절 주기 -->
+
+</select>
+
+
+<!-- 삭제/수정할 게시판의 비밀번호 개수를 리턴하는 select 문을 내포한 select 태그 선언-->
+<select id="getBoardPwdCnt" parameterType="com.naver.erp.BoardDTO"  resultType="int"> 
+
+	select 
+	
+		count(*)
+		
+	from board
+	where 
+		b_no=#{b_no} and  pwd=#{pwd}		
+
+</select>
+
+
+
+<!-- 게시판 수정하는 update를 내포하는 update 태그 선언-->
+<update id="updateBoard" parameterType="com.naver.erp.BoardDTO" > 		
+
+	update 
+	
+		board
+		
+	set						<!--  수정 할 법한 요소들을 update 해주기-->
+		subject = #{subject}
+		, writer = #{writer}
+		, content = #{content}
+		, email = #{email}
+		
+	where 
+		b_no=#{b_no}  and  pwd=#{pwd}				<!--  암호 존재개수를 확인하는 코딩이 없더라도 여기서 한 번 더 확인할 수 있는 코딩을 주는 게 좋음 -->
+
+</update>
+
+
+
+<!-- 게시판 삭제하는 delete를 내포하는 delete 태그 선언-->
+<delete id="deleteboard" parameterType="com.naver.erp.BoardDTO" > 		
+
+	delete 
+	
+		board
+	
+	where 
+		b_no=#{b_no}  and  pwd=#{pwd}				
+
+</delete>
 </mapper>
