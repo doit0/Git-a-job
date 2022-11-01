@@ -100,3 +100,75 @@ public class BoardDAOImpl implements BoardDAO {
 		// System.out.println("BoardDAOImpl.getBoard 메소드 호출 종료~");
 		 return board;
 	}
+		//--------------------------------------------------
+		//  수정/삭제 할 게시판의 [존재 개수] 리턴하는 메소드 선언
+		//--------------------------------------------------
+		 public int getBoardCnt( int b_no ){
+			 
+				
+			// SqlSessionTemplate 객체의 selectOne(~,~) 메소드 호출로 [게시판 존재 개수] 얻기
+			 int boardCnt = this.sqlSession.selectOne(   				 /// 게시판의 존재 개수 확인 (1행 1열의 select 결과물)
+
+						 "com.naver.erp.BoardDAO.getBoardCnt"
+						 , b_no
+		 
+					 );
+			 return boardCnt;				/// 항상 특정 데이터(게시물 등) 의 존재개수를 알아야함.
+		 }
+	 
+		//--------------------------------------------------
+		// 수정/삭제 할 게시판의 [비밀번호 존재 개수] 리턴하는 메소드 선언
+		//--------------------------------------------------
+	 	public int getBoardPwdCnt( BoardDTO boardDTO  ) {
+	 		
+			
+		// SqlSessionTemplate 객체의 selectOne(~,~) 메소드 호출로 [게시판 존재 개수] 얻기
+		 int boardPwdCnt = this.sqlSession.selectOne(   	
+					 "com.naver.erp.BoardDAO.getBoardPwdCnt"
+					 , boardDTO					
+					 // 2번째 인자값의 데이터는 한 >>>코딩상 1개만<< 있어야함. 따로따로 넘겨줄 수 없음.   따라서 pk 값 따로, 암호 따로 하는 게 아니라 boardDTO 로 한꺼번에 받는 게 좋음
+				 );
+		 return boardPwdCnt;				
+	 }
+	 
+	 	
+		 
+		//--------------------------------------------------
+		// 게시판 수정 명령한 후 수정 적용행의 개수를 리턴하는 메소드 선언
+		//--------------------------------------------------
+		 	public int updateBoard( BoardDTO boardDTO  ) {
+
+			// SqlSessionTemplate 객체의 update(~,~) 메소드 호출로 [게시판 수정 명령] 한 후 수정 적용행의 개수 얻기
+			 int updateBoardCnt = this.sqlSession.update(   	
+						 "com.naver.erp.BoardDAO.updateBoard"
+						 , boardDTO					
+		 
+					 );
+			 return updateBoardCnt;				
+		 }
+	 
+
+			//--------------------------------------------------
+			// 수정/삭제 할 게시판의 [비밀번호 존재 개수] 리턴하는 메소드 선언
+			//--------------------------------------------------
+		 	public	int deleteBoard( BoardDTO boardDTO  ) {
+		 	// System.out.println( "deleteBoard 메소드 호출!" );
+			 
+			 // [SqlSessionTemplate 객체]의 delete(~,~) 를 호출하여  [게시판 삭제 명령]한 후 삭제 적용행의 개수얻기
+			 int deleteBoardCnt = this.sqlSession.delete(   	
+							 "com.naver.erp.BoardDAO.deleteboard"
+							 , boardDTO				
+			 
+						 );
+				 return deleteBoardCnt ;	
+				
+			}  // deleteBoard 가 끝나는 곳
+
+		 	
+		
+	
+		 	
+} //  class BoardDAOImpl 이 끝나는 곳
+		 	
+		 	
+		 	
