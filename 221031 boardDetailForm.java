@@ -45,9 +45,24 @@
 			// 현재는 hidden 태그에 입력된 게시판 번호가 전송된다.				/// 게시판 번호 = b_no (pk 값)
 			document.boardUpDelForm.submit();
 		}
+			
+			//-------------------------------------------------
+			// [댓글 쓰기]버튼에 클릭이벤트가 발생하면 goBoardregForm 함수 선언하기
+			//-------------------------------------------------
+			$(".BoardRegFormBtn").bind("click", function(){				
+				goBoardRegForm();
 
+			});
 
-		
+			
+				// 게시판 댓글 쓰기 화면으로 이동하는 함수 선언
+				function goBoardRegForm(){
+			
+					document.boardRegForm.submit();
+			
+				}
+
+	});
 </script>
 </head>
 <body>
