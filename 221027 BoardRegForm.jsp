@@ -58,18 +58,18 @@
 						// 웹서버와 통신한 후 웹서버의 응답을 성공적으로 받았을 경우 실행할 익명함수 설정.		
 					 	, success:function( regCnt ){		
 							if( regCnt ==1){
-								alert("게시판 새 글 쓰기 성공!")
-									if( confirm("다시 새 글을 작성하시겠습니까?")==false ){
+								alert("${empty param.mom_b_no?'새글':'댓글'}  쓰기 성공!")
+									if (confirm("${empty param.mom_b_no?'새글':'댓글'}을 정말 쓰시겠습니까?") == false){
 										location.replace("/boardList.do");  
 									}
 									else{
-										document.boardRegForm.reset();			
+										document.boardRegForm.reset();			// 다시 한 번 새 글을 쓰게 함		
 									}
 								
 							}
 								// 웹서버에 "/boardList.do" 주소로 접속 시도	
 								else{
-									alert("게시판 새 글 쓰기 실패! 아이디 또는 암호가 틀립니다. 재입력 해주십시오!")
+									alert("${empty param.mom_b_no?'새글':'댓글'} 쓰기 실패! 아이디 또는 암호가 틀립니다. 재입력 해주십시오!")
 						
 								}
 					 	}
@@ -93,7 +93,11 @@
 <center>
 	<form name="boardRegForm" >					
 	<table border=1 cellpadding=5 style="border-collapse:collapse" align="center">
-	<caption> [새글쓰기]</caption>
+	<caption> 	<!--  mom_b_no 라는 파라미터명에 해당하는 값이 없으면 새글쓰기 라는 문자를 현재 JSP 페이지에 표현하기
+	 		 					     있으면 댓글쓰기 라는 문자를 현재 JSP 페이지에 표현하기 -->
+			<!--  삼항연산자의 형식으로 만들어봄 -->
+			 ${empty param.mom_b_no?"[새글쓰기]":"[댓글쓰기]"}			
+	</caption>
 	<tr>
 		<th bgcolor="lightgray"> 이 름 </th>
 		<td>
@@ -135,6 +139,22 @@
 		</td>
 	</tr>
 	</table>		
+		
+		
+		
+		
+		<!-- 커스텀태그 중에  C코어 if 문 태그를 사용했을 경우 -->
+		<!--   mom_b_no에 엄마글 (이하 부모글)의 pk 번호가 존재한다면 input 태그 활성화. 존재하지 않는다면 input 태그 비활성화 -->
+		<c:if test="${!empty param.mom_b_no}">	
+			<input type="hidden"  name="b_no" value="${param.mom_b_no}">
+		 </c:if>					
+		 
+		
+		
+		
+		
+		
+		
 	<div style="height:5px;"></div>
 		<input type="button" value="저장" class="regBtn"  >
 		<input type="reset" value="다시 작성" >
