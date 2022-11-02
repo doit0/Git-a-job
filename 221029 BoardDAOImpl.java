@@ -61,10 +61,44 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 	
 	
+	//  [후손글의 출력 순서번호]를 1 업데이트 시키는 메소드 선언
+	public int updatePrintNo( BoardDTO boardDTO ) {
+ 		 int updatePrintNoCnt = this.sqlSession.update(   	
+
+					 "com.naver.erp.BoardDAO.updatePrintNo"
+					 , boardDTO				
+	 
+				 );
+		 return updatePrintNoCnt ;
+ 	}		
+
+	
+ 	//삭제될 게시판글의 동생글의 출력 순서번호를 1씩 감소시키기
+ 	public int updatePrintNoDown( BoardDTO boardDTO ) {
+ 		
+ 		 int updatePrintNoDownCnt = this.sqlSession.update(   	
+					 "com.naver.erp.BoardDAO.updatePrintNoDown"
+					 , boardDTO				
+	 
+				 );
+		 return updatePrintNoDownCnt ;
+ 	}
+	
+	
+	// [후손글의 개수]를 리턴하는 메소드 선언
+	public int getBoardChildrenCnt( BoardDTO boardDTO ) {
+		 int BoardChildrenCnt = this.sqlSession.selectOne(  
+				 
+				 "com.naver.erp.BoardDAO.getBoardChildrenCnt"
+				 , boardDTO
+			);
+		return BoardChildrenCnt;			
+	}	/// 나의 출력순서번호와 들여쓰기 레벨보다  1 크다..? (내 바로 밑에 있는 게시글)  이게 존재할 때 나에겐 자식글이 있다.     (subQuery 사용해서 자식의 개수를 구하기)
+
+		
 	
 	 
 	 // [게시판 글 조회수 증가하고 수정하는 행의 개수] 리턴하는 메소드 선언
-	
 	 public int updateReadCount(int b_no) {
 		 
 			//System.out.println("BoardDAOImpl.updateReadCount 메소드 호출 시작!");
