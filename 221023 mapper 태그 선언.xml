@@ -200,3 +200,76 @@
 
 </delete>
 </mapper>
+
+	
+
+
+<!-- 삭제될 게시판글의 동생글의 출력 순서번호를 1씩 감소시키는 update를 내포하는 update 태그 선언  -->
+<update id="updatePrintNo"  parameterType="com.naver.erp.BoardDTO" > 	
+update board set						
+		print_no = print_no +1
+		
+	where 
+	
+		group_no = ( select group_no from board where b_no = #{b_no} )
+		and 
+		print_no > ( select print_no from board where b_no = #{b_no} )	
+
+
+</update>  <!--  수정 할 법한 요소들을 update 해주기-->   	
+
+
+
+<!--[후손글의 개수]를 리턴하는 select 를 내포하는 select 태그 선언 -->
+<select id="getBoardChildrenCnt" parameterType="com.naver.erp.BoardDTO" resultType="int">		<!--  1행 1열의 데이터를 count 해서 리턴하니까 당연히 int 형의 결과값 --> 
+
+	select count(*)from board
+	where 
+	
+		group_no = ( select group_no from board where b_no=#{b_no} )
+		and 
+		print_no = ( select print_no +1 from board where b_no=#{b_no} )	
+		and 
+		print_level = ( select print_level +1 from board where b_no=#{b_no} )
+		
+
+</select>					<!--자식 유무 아는 방법. 1. 바로 밑에 있는 게시글의 유무 	(엄마글의 그룹번호 구하는 서브쿼리)
+													 2. 출력순서번호는 1개 더 크면 됨.  (엄마글의 출력순서 번호 +1 구하는 서브쿼리)
+													 3. 들여쓰기 번호는 1개 더 크면됨.	(엄마글의 들여쓰기 번호 +1 구하는 서브쿼리)
+							 이 조건을 만족했을 시에 1을 리턴. 그렇다면 자식이 있다는 의미 -->
+
+
+<!-- 삭제될 게시판글에 동생글이 있을 경우 삭제처리하며 수정할 제목과 내용 update를 내포하는 update 태그 선언  -->
+<update id="updateBoardEmpty"  parameterType="com.naver.erp.BoardDTO" > 	
+update board 					
+	set					
+		subject = '삭제된 게시물입니다.'
+		, writer = '삭제된 내용입니다.'
+		, content = '삭제된 내용입니다.'
+		, email = ''
+		, pwd ='zxcv'
+		
+	where 
+		b_no=#{b_no} 
+
+</update>  <!--  수정 할 법한 요소들을 update 해주기-->   	<!--  부모글과 group_no가 같고 print_no 가 높은 글 = 자식글이 있다. -->
+
+
+
+
+<!-- 삭제될 게시판글의 동생글의 출력 순서번호를 1씩 감소시킨 후 수정하는 update 내포하는 update 태그 선언  -->
+<update id="updatePrintNoDown"  parameterType="com.naver.erp.BoardDTO" > 	
+
+	update 
+			board 					
+	set					
+
+			print_no = print_no -1 					<!--  print_no 만 있어야함. print_level 은 있어야할 필요 X -->
+
+	where 
+			group_no = (select group_no from board where b_no = #{b_no})	
+			and 
+			print_no > (select print_no from board where b_no = #{b_no})	
+	
+
+</update>  <!--  수정 할 법한 요소들을 update 해주기-->   	
