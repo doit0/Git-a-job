@@ -25,21 +25,31 @@ private BoardService boardService;
   // get방식과 post 방식 모두 접근 가능. 
   @RequestMapping( value="/boardList.do")	
 
-	public ModelAndView boardList() {
+	public ModelAndView boardList(
+			BoardSearchDTO	boardSearchDTO			/// 검색조건 저장용이라서 테이블과는 관계 없음
+	) {
   
   
 	// [ModelAndView 객체] 생성하기
 	ModelAndView mav = new ModelAndView();	
   
-
+	// 총 개수를 구하는 쿼리문이 따로 들어가야함. 페이징 처리를 안 한 [검색된 게시글의 총 개수]   ( 검색만 하고 페이징 처리 X, 검색은 Transaction 의 대상이 X -> 서비스 클래스에 들를필요는 X. (하지만 해놓으면 좋다. )  )
+	int boardTotCnt = this.boardDAO.getBoardListTotCnt( boardSearchDTO );
+			
+	// 전체 게시판에 있는 총 게시물의 개수
+	int boardFullTotCnt = this.boardDAO.getBoardListFullTotCnt( );
+	
+	
 	// BoardDAOImpl 객체의 getBoardList 메소드 호출로 [게시판 목록] 얻기	
-  // boardList 에는 다량의 HashMap 객체의 有
-	List<Map<String, String>> boardList = this.boardDAO.getBoardList();
+  	// boardList 에는 다량의 HashMap 객체의 有
+	List<Map<String, String>> boardList = this.boardDAO.getBoardList( boardSearchDTO );
   
-  // [ModelAndView 객체] 에 [게시판 목록 검색 결과]를 저장하기
+  	// [ModelAndView 객체] 에 [게시판 목록 검색 결과]를 저장하기   (EL  로 꺼낼 수 있음)
 	// [ModelAndView 객체] 에 저장된 객체는 HttpServletRequest 객체에도 저장이 됨.
-  mav.addObject("boardList", boardList);
-  
+  	mav.addObject("boardList", boardList);
+ 	mav.addObject("boardTotCnt", boardTotCnt );	
+	mav.addObject("boardFullTotCnt", boardFullTotCnt );
+	
     // 호출된 JSP 페이지로 DB 연동 결과물을 보냄.
   		mav.setViewName("boardList.jsp");						
 		return mav; 
