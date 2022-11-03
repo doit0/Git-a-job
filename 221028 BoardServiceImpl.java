@@ -24,6 +24,27 @@ public class BoardServiceImpl implements BoardService{
 	private BoardDAO boardDAO;					/// BoardService 가 BoardDAO에 접속하는 과정이 필요
 	
 
+	// [1개 게시판 글 입력 후 입력 적용 행의 개수] 리턴하는 메소드 선언
+	public int insertBoard( BoardDTO boardDTO) {
+			
+			
+		//  엄마 글 이후의 게시판 글에 대해 출력순서번호를 1 증가 시키기.
+		if( boardDTO.getB_no() >0 ) { 			///  그러니 엄마글의 후손들의 출력순서번호 1 증가
+			int updatePrintNoCnt = this.boardDAO.updatePrintNo( boardDTO );
+		}
+		
+			// BoardDAOImpl 객체의  insertBoard 메소드 호출하여 게시판 글 입력 후 입력 적용 행의 개수 얻기
+			int boardRegCnt = this.boardDAO.insertBoard(boardDTO);
+
+		// 1개 게시판 글 입력 적용 행의 개수 리턴하기
+		return boardRegCnt;
+
+		}
+	
+	
+	
+	
+
 	// [1개의 게시판 글]을 리턴하는 메소드 선언				
 	  /// 상세 DB 연동 간접 지시를 하는 작업 (세부적인 DB 연동 지시가 보이는 구문)
   	  /// 해야할 작업 1. 게시판 상세보기 작업을 할 때 조회수를 1 증가시켜줘야 함.  2. 게시판 글 가져오기
@@ -106,6 +127,26 @@ public class BoardServiceImpl implements BoardService{
 		if ( boardPwdCnt == 0 ) {
 			return -1;				// boardUpDelForm  에서 암호가 불일치할 때는 -1 리턴하기로 했으니까.  (삭제여부를 먼저 살펴봐야 암호의 문제인지 삭제의 문제인지 알 수 있다)
 		}
+		
+				
+		// [BoardDAOImpl 객체]의 getBoardChildrenCnt 메소드를 호출하여 [삭제할 게시판의 자식글 존재 개수]를 얻는기
+		 // 삭제할 글을 고려하면서 댓글 쓴 사람도 만족할 수 있게 글을 정리 하기
+		int BoardChildrenCnt = this.boardDAO.getBoardChildrenCnt( boardDTO );	
+		
+		if ( BoardChildrenCnt > 0 ) {			// 자식글이 존재할 경우 0			삭제된 모든 것 (제목, 내용, 작성자) +  관리자만 아는 암호로 update
+			
+			int updateBoardCnt = this.boardDAO.updateBoardEmpty( boardDTO );	
+			
+			return -2;				// 자식이 내 바로 밑에 있는 글이 들여쓰기 레벨이 나보다 작다 = 내 자식글.			들여쓰기 레벨이 같다 = 내 자식글 X 
+		}							/// 나의 출력순서번호와 들여쓰기 레벨보다  1 크다..? (내 바로 밑에 있는 놈)  이게 존재할 때 나에겐 자식이 있다.
+		
+		
+		
+		
+						
+		// 삭제될 게시판글의 동생글의 출력 순서번호를 1씩 감소시키기
+		int updatePrintNoDownCnt = this.boardDAO.updatePrintNoDown( boardDTO );	
+		
 								
 		// 삭제 실행하고 삭제 적용행의 개수 얻기	
 		int deleteCnt = this.boardDAO.deleteBoard( boardDTO );	
