@@ -25,7 +25,7 @@ public class BoardDAOImpl implements BoardDAO {
 	
 	
 	// [검색한 게시판 목록] 리턴하는 메소드
-	public List<Map<String, String>> getBoardList( ){
+	public List<Map<String, String>> getBoardList( BoardSearchDTO boardSearchDTO ){
 		
 		// SqlSessionTemplate 객체의 selectList 메소드 호출로 List<Map<String, String>> 로 받아오기			
 	List<Map<String, String>> boardList = this.sqlSession.selectList(
@@ -34,12 +34,33 @@ public class BoardDAOImpl implements BoardDAO {
 				// 게시판 글을 가져오는 SELECT SQL 구문의 위치 지정하기.	
 				
 				"com.naver.erp.BoardDAO.getBoardList"						
-
+				, boardSearchDTO
 				);
 		return boardList;
 		
 		
 	}
+	
+	// [검색한 게시판 목록]의 총 개수를 리턴하는 메소드 선언
+	public int getBoardListTotCnt( BoardSearchDTO boardSearchDTO ) {
+		int BoardListTotCnt = this.sqlSession.selectOne(
+
+				"com.naver.erp.BoardDAO.getBoardListTotCnt"								
+				, boardSearchDTO
+			);
+			return BoardListTotCnt;
+		}
+	
+		
+	// [게시판 글 목록]의 총 게시글 개수를 리턴하는 메소드 선언
+	public int getBoardListFullTotCnt( ) {
+	int BoardListFullTotCnt = this.sqlSession.selectOne(
+	
+					"com.naver.erp.BoardDAO.BoardListFullTotCnt"								
+				);
+				return BoardListFullTotCnt;
+			}
+	
 	
 	// [게시판 글 입력 후 입력 적용 행의 개수] 리턴하는 메소드 선언
 	public int insertBoard(BoardDTO boardDTO) {		
