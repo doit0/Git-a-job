@@ -56,6 +56,58 @@
 </head>
 <body>
 
+	<!-- ************************************************************************ -->
+	<!--  [게시판 검색 조건 입력 양식] 내포함 form 태그 선언 -->
+	<!-- ************************************************************************ -->
+	<form name="boardSearchForm" method="post" action="/boardList.do" class="boardSearchForm">		<!--  검색 조건을 가지고 다시 한 번 웹서버에 접속해서 검색화면을 보고싶은 것 (동기방식) -->
+	
+			<!-- -------------------------------------------- -->			<!--  화면이 깜빡이며 새로운 결과를 보일 경우 = 동기방식. 만약 비동기방식 사용한다면 자스코딩이 많아지지만 간단해진다는 장점이 있음 -->
+			<!-- 키워드 데이터 저장할 입력양식 선언-->
+			<!-- -------------------------------------------- -->
+			[키워드]: 
+			<!-- value 에 써넣은 EL태그처럼 파라미터값을 꺼내서 jsp 페이지에 넣으면 키워드가 남는다. -->
+	<!-- 
+			<input type="text" name="keyword1" class="keyword1" value="${param.keyword1}">			
+			
+			<select name="or_And">
+				<option value="or"  ${ param.or_And=='or'?'selected':''} >or
+				<option value="and" ${ param.or_And=='and'?'selected':''}>and
+			</select>
+			
+			 <input type="text" name="keyword2" class="keyword2" value="${param.keyword2}">			
+	 -->	
+			 <!--  BoardSearchDTO 객체 넣고 바로 mapper_board  로 가면 됨. BoardController 로 갈 필요  X -->
+				
+				
+				
+			<input type="text" name="keyword1" class="keyword1" value="">			
+			
+				
+			<!-- ------------------------------------------------------------------------------ -->
+			<!--  클릭한 페이지번호를 저장할 hidden 입력양식 선언. 페이징 처리 관련 데이터이다. -->
+			<!-- ------------------------------------------------------------------------------ -->
+			 <input type="hidden" name="selectPageNo" class="selectPageNo" value="1">
+			 
+			 <!-- ------------------------------------------------------------------------------ -->
+			<!--  한 화면에서 보여지는 행의 개수를 저장할 hidden 태그 선언. -->
+			<!-- ------------------------------------------------------------------------------ -->
+			<input type="hidden" name="rowCntPerPage" class="rowCntPerPage" value="10">				<!-- 한 페이지 당 나와야할 페이지 번호,  출력 행의 개수 필요. -->
+			 			
+			<!-- ------------------------------------------------------------------------------ -->
+			<!--  한 화면에서 보여지는 페이지 번호의 개수를 저장할 hidden 태그 선언. -->
+			<!-- ------------------------------------------------------------------------------ -->
+			<input type="hidden" name="pageNoCntperPage" class="pageNoCntperPage" value="10">	
+
+			 <div style="height:10px">	  </div>
+			  	<input type="button" value=" 검색 " class="boardSearchBtn" onClick="boardSearch()">&nbsp;			<!-- 검색 조건에 맞게 나오면 부모글과 자식글을 구분하기 어렵다는 단점이 있음 -->
+			  	<input type="button" value=" 모두검색 " class="boardSearchAllBtn" onClick="boardSearchAll()">&nbsp;
+			 <div style="height:10px">	  </div>
+	</form>
+
+
+
+
+
 	<table border=1 cellpadding=5 style="border-collapse:collapse">
 		
 	<tr bgcolor="skyblue">
