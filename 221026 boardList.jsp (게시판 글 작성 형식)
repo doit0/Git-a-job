@@ -32,9 +32,19 @@
 				
 				// name=boardRegForm 을 가진 form 태그의 action 값 해당한 URL 주소로 웹서버 접속하기
 		 		document.boardRegForm.submit();
+				
+				
+		
 		 	})
 		 
 		 /// 검색화면에 있는 검색 조건에 있는 것들이 들어가야하니까 post 방식을 사용해야함.
+				
+		 /// 검색화면에 있는 검색 조건에 있는 것		
+		var formObj = $(".boardSearchForm");
+			
+		formObj.find(".keyword1").val("${param.keyword1}");
+		
+		
 		})
 
 	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
@@ -49,7 +59,49 @@
 		
 		}
 		
+	// 검색 버튼 클릭했을 때 호출되는 함수 선언
+	function boardSearch( ){					/// 검색버튼 누르자마자 작동됨.
 		
+		//--------------------------------------------------------
+		// 입력한 키워드 가져와서 변수 keyword1에 저장하기				///  공백이 있는 경우의 유효성 체크를 해줘야함.
+		var keyword1= $(".keyword1").val();
+	
+		// keyword1 변수 안에 문자가 아닌 데이터가 있으면 길이가 없는 문자로 대체하기
+		if( typeof(keyword1)!="string" ){	keyword1=""; }					/// 문자가 아닌 경우.. 거의 undefined 일 경우가 많기 때문에 길이 없는 문자데이터 취급하기
+		
+		// keyword1 변수 안에 문자 앞뒤 공백 제거
+		keyword1 = $.trim(keyword1);									/// 	따라서 크로스브라우징 가능한 코딩 사용하는 게 좋음 (JQuery의 장점.. 크로스 브라우징 가능케함.)	
+		// 위 코드는 keyword1 = keyword1.trim(); 으로 대체 가능. <주의> String 객체의 메소드는 explorer9 이하의 버전에선 작동  X.  	
+		
+		// 웹화면 키워드 입력란에 앞뒤 공백 제거한 문자 삽입하기		/// 유저가 실수로 넣은 공백을 프로그램상 컷 해줄 수 있음.
+		$(".keyword1").val(keyword1);		
+		//--------------------------------------------------------
+
+
+		
+		// name=boardSearchForm 을 가진 form 태그의 action 값 해당한 URL 주소로 웹서버 접속하기		(method="post" action="/boardList.do" + 입력양식 등)
+		// 이 때 form 태그 내부의 모든 입력양식의 
+		// name 값은 파라미터명, value 값은 파라미터값으로 웹서버로 전송된다.	
+		
+		document.boardSearchForm.submit( );								/// 웹서버에 URL 주소를 명령하는 입력어  					
+		
+	}
+	
+	// 모두 검색 버튼 클릭했을 때 호출되는 함수 선언
+
+	function boardSearchAll( ){			/// 모두검색   (키워드를 비우고 들어간다고...?)
+		
+		// 웹화면 키워드1 입력란에 "" 삽입하기	
+		$(".keyword1").val("");
+	
+
+		
+		// class=boardSearchBtn 가진 태그에 클릭이벤트 발생 시키기	
+		$(".boardSearchBtn").click();	/// 모두 검색이라는 것 도 결국 검색버튼을 이용하는 것.
+		// 위 코드는 오른쪽 코드로 대체가 가능하다.    document.boardSearchForm.submit( );							/// div 태그를 달아주고 3초뒤에 사라지게 한다.고..? animation fadeout 같은 기교 추가 가능...?
+
+		
+		}	
 		
 </script>
 
@@ -163,7 +215,20 @@
 		<c:forEach var="board" items="${requestScope.boardList}" varStatus="loopTagStatus">   <!--  이 태그가 JSTL 태그. 그 중 c:forEach 가 자바코드 중 반복문임. -->
 			<tr bgcolor="${loopTagStatus.index%2==1?'lightgray':'white'}">
 			<td>${ board.b_no }			</td>		<!-- ($){} 형식으로 쓰는 것이 EL 태그.     (점).뒤에 HashMap 객체의 키값을 넣어준다. -->
-			<td>${ board.subject }		</td>
+			
+			<td>
+			
+				<c:forEach begin="1" end="${ board.print_level }">		
+					&nbsp;&nbsp;&nbsp;
+				</c:forEach>				
+				<c:if test="${ board.print_level>0 }">		
+						ㄴ
+				</c:if>
+				
+				${ board.subject }		
+				
+			</td>
+			
 			<td>${ board.writer }		</td>
 			<td>${ board.readcount }	</td>
 			<td>${ board.reg_date }		</td>   
