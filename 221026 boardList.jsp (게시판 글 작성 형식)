@@ -45,6 +45,17 @@
 		formObj.find(".keyword1").val("${param.keyword1}");
 		
 		
+		<c:if test="${!empty param.or_And}">										/// 비어있지 않을 때만 파라미터 값을 넣어줘~ 라는 의미
+			formObj.find(".or_And").val("${param.or_And}");		 		///  select  의 경우 로그인해서 들어갔을 때는 ($){param.or_And} 의 값이 없음. 결국 길이가 없는 select를 선택하게 됨. (디폴트로 or 가 선택될 수 있게 c코어 태그로 EL 만들어주기)
+		</c:if>
+			
+		<c:if test="${!empty param.rowCntPerPage}">										
+			formObj.find(".rowCntPerPage").val("${param.rowCntPerPage}");		 		
+		</c:if>
+	
+		
+		formObj.find(".keyword2").val("${param.keyword2}");	
+		
 		})
 
 	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
@@ -83,7 +94,35 @@
 		// 이 때 form 태그 내부의 모든 입력양식의 
 		// name 값은 파라미터명, value 값은 파라미터값으로 웹서버로 전송된다.	
 		
+		document.boardSearchForm.submit( );		/// 웹서버에 URL 주소를 명령하는 입력어 
+		
+		
+		//--------------------------------------------------------
+		// 입력한 키워드 가져와서 변수 keyword2에 저장하기	
+		var keyword2=$(".keyword2").val();
+		
+		// keyword2 변수 안에 문자가 아닌 데이터가 있으면 길이가 없는 문자로 대체하기
+		if( typeof(keyword2)!="string" ){	keyword2=""; }	
+		
+		// keyword2 변수 안에 문자 앞뒤 공백 제거
+		keyword2 = $.trim(keyword2);	
+		
+		// 웹화면 키워드 입력란에 앞뒤 공백 제거한 문자 삽입하기
+		$(".keyword2").val(keyword2);	
+		// 위 코드는 keyword2 = keyword2.trim(); 으로 대체 가능. <주의> String 객체의 메소드는 explorer9 이하의 버전에선 작동  X.  	
+		//--------------------------------------------------------
+
+		
+		
+		
+		//--------------------------------------------------------
+		// name=boardSearchForm 을 가진 form 태그의 action 값 해당한 URL 주소로 웹서버 접속하기		(method="post" action="/boardList.do" + 입력양식 등)
+		// 이 때 form 태그 내부의 모든 입력양식의 
+		// name 값은 파라미터명, value 값은 파라미터값으로 웹서버로 전송된다.	
+		//--------------------------------------------------------
 		document.boardSearchForm.submit( );								/// 웹서버에 URL 주소를 명령하는 입력어  					
+		
+	}
 		
 	}
 	
@@ -93,7 +132,15 @@
 		
 		// 웹화면 키워드1 입력란에 "" 삽입하기	
 		$(".keyword1").val("");
+		
+		// 웹화면 키워드2 입력란에 "" 삽입하기	
+		$(".keyword2").val("");
 	
+
+		$(".or_And").val("or");	
+		
+		// class=boardSearchBtn 가진 태그에 클릭이벤트 발생 시키기	
+		$(".boardSearchBtn").click();
 
 		
 		// class=boardSearchBtn 가진 태그에 클릭이벤트 발생 시키기	
@@ -102,6 +149,26 @@
 
 		
 		}	
+		
+	
+	
+	//**********************************************
+	// 함수 pageNoBtn 선언
+	//**********************************************	
+	function pageNoBtn( pageNo){				
+		
+		// class=selectPageNo 를 가진 입력양식에 
+		// 클릭한 (= 선택한) 페이지 번호를 value 값으로 삽입하기( 서버로 선택한 페이지 번호를 보내기 위해 )	
+		$(".selectPageNo").val( pageNo );	
+	
+	
+
+		// boardSearch( ) 함수  호출하기
+		boardSearch( );		/// 페이지 번호 누른 것 = 검색한 것과 마찬가지 (= 함수 boardSearch( ) 실행시켜야함.)
+	
+	}
+	
+		
 		
 </script>
 
@@ -132,8 +199,14 @@
 				
 				
 				
-			<input type="text" name="keyword1" class="keyword1" value="">			
+			<input type="text" name="keyword1" class="keyword1" value="">	
 			
+			<select name="or_And" class="or_And">
+				<option value="or"  >or
+				<option value="and" >and
+			</select>
+			
+			 <input type="text" name="keyword2" class="keyword2" value="">			
 				
 			<!-- ------------------------------------------------------------------------------ -->
 			<!--  클릭한 페이지번호를 저장할 hidden 입력양식 선언. 페이징 처리 관련 데이터이다. -->
@@ -235,7 +308,41 @@
 			
 	</c:forEach>
 	</table>
+
+
+<!-- 검색된 게시글의 개수가 0개보다 크면, 즉 검색된 게시물이 존재하면  			을 c 코어 태그로 표현함-->
+	<c:if test="${requestScope.boardTotCnt>0 }" >			
 	
+		<!-- [처음] 문자 출력 -->
+		<span style="cursor:pointer" onclick="pageNoBtn(1);">[처음]</span>
+		
+		<!-- [이전] 문자 출력 -->
+		<span style="cursor:pointer" onclick="pageNoBtn( ${ requestScope.pagingMap.selectPageNo}-1 );">[이전]</span>				<!-- 이전페이지: 현재 선택한 페이지번호 -1 -->
+	
+		<!-- 선택한 페이지 번호에 대응하는 페이지 번호 출력 -->
+		<c:forEach var="no" begin="${requestScope.pagingMap.begin_pageNo_perPage}" 
+							end  ="${requestScope.pagingMap.end_pageNo_perPage}" step="1">		
+		
+			<!-- 만약에 선택한 페이지번호와 출력되는 페이지번호가 다르면-->
+			<c:if test="${ requestScope.pagingMap.selectPageNo!=no}">		
+				<span style="cursor:pointer"  onclick="pageNoBtn( ${no});"> [ ${no} ] </span> &nbsp; 			<!--  현재 페이지와 no 번호가 아닌 경우 괄호가 들어간다.  selectPageNo와 no -->
+			</c:if>
+			
+			<!-- 만약에 선택한 페이지번호와 출력되는 페이지번호가 같으면-->
+			<c:if test="${ requestScope.pagingMap.selectPageNo==no}">
+				<span style="cursor:pointer" >	${no} </span> &nbsp; 
+			</c:if>
+		</c:forEach>	
+	
+		<!-- [다음] 문자 출력 -->
+			<span style="cursor:pointer" onclick="pageNoBtn( ${ requestScope.pagingMap.selectPageNo}+1 );">[다음]</span>
+		
+		<!-- [마지막] 문자 출력 -->
+		<span style="cursor:pointer" onclick="pageNoBtn( ${ requestScope.pagingMap.last_pageNo}    );">[마지막]</span>			<!--  가장 마지막 페이지 번호의 값을 가져와야한다. -->
+	
+		
+	</c:if>
+		
 	
 	<form name="boardRegForm" >   <!-- URL 주소인 action 값이 없어도 위에서 줄 수 있음. (document.boardRegForm.action="/boardRegForm.do"; 처럼) -->
 	</form>
