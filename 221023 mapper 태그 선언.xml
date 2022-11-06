@@ -7,7 +7,45 @@
 <!-- ========================================= -->
 <mapper namespace="com.naver.erp.BoardDAO">  <!-- xml 파일 안의 내용이 LoginDAO 인터페이스의 내용과 일치해야함 -->
 
+<!-- ========================================= -->
+<!-- 게시판 글 목록 구할 때 사용할 where 절을 sql 태그 안에 선언하기.  -->
+<!-- ========================================= -->
+<sql id ="boardWhere">
+			1=1	
+			 
+			<!--  keyword1 이나 keyword2 중 둘중 하나라도 있으면   and() 를 쓸 수 있다.  -->
+			<if test="(keyword1!=null and keyword1.length()>0 ) or  ( keyword2!=null and keyword2.length()>0 )" >		
 
+					and	(		
+			</if>					
+						<if test="keyword1!=null and keyword1.length()>0">				<!--  keyword1 에 대한  -->											
+									(	upper(subject) like upper('%${keyword1}%')		
+										or 												
+										upper(content) like upper('%${keyword1}%')
+										or
+										upper(writer) like upper('%${keyword1}%')			
+									)						
+						</if>		
+			<if test="  (keyword1!=null and keyword1.length()>0 ) and  ( keyword2!=null and keyword2.length()>0 ) " >			<!--  둘 다 있을 경우에만 or/and 가 가능하니까 -->			
+					${or_And}	
+			</if>					
+						<if test="keyword2!=null and keyword2.length()>0">			
+									(												
+					
+										upper(subject) like upper('%${keyword2}%')		
+										or 												
+										upper(content) like upper('%${keyword2}%')
+										or
+										upper(writer) like upper('%${keyword2}%')			
+									)												
+																					
+								</if>
+			<if test=" ( keyword1!=null and keyword1.length()>0 )  or ( keyword2!=null and keyword2.length()>0 ) " >				
+						)						
+			</if>								
+
+																		
+	</sql>			
 	<select id="getBoardList"  resultType="hashmap">   <!--  select 쿼리에 n행 m열 을 리턴하더라도 resultType 에는 !! 1행의 데이터만 적어줘야함 !!  -->
 													   <!--	 각 행의 데이터가 1개의 HashMap 객체 안으로 들어간다.  
 															여러 개의 HashMap 객체가 1행을 받아들이도록 해도	결국 안 된다. 모든 저장객체를 String으로 담아야하니까 모든 select 의 결과를 모두 >>>문자화<<< 해줘야함.
@@ -65,7 +103,25 @@
 		 -->
 	</select>
 
-	
+<!--  [검색한 게시판 목록]의 총 개수를 리턴하는 select 문을 내포한 select 태그 선언-->
+<select id="getBoardListTotCnt" parameterType="com.naver.erp.BoardSearchDTO"  resultType="int"> 
+			select 
+				count(*)				<!--  검색된 결과물의 총 개수를 구하는 것 -->
+			from board 				
+					
+			where								<!-- 키워드 부분이 중복된 쿼리 -->
+			
+			 <include refid="boardWhere"/>		<!-- ==중복된 쿼리를 따로 SQL 태그에 넣고 수입해서 사용하는 방법.  -->
+</select>
+		
+		
+<!--  [게시판 글 목록]의 총 게시글 개수를 리턴하는 select 문을 내포한 select 태그 선언-->
+<select id="BoardListFullTotCnt" resultType="int"> 	<!--  외부에서 참여하는 데이터 타입 없으니까 parameterType 안 써도 됨. -->
+			select 
+				count(*)				
+			from board 				
+			
+</select>	
 	
 <insert id="insertBoard" parameterType="com.naver.erp.BoardDTO" >
 
