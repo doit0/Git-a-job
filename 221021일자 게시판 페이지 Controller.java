@@ -29,16 +29,38 @@ private BoardService boardService;
 			BoardSearchDTO	boardSearchDTO			/// 검색조건 저장용이라서 테이블과는 관계 없음
 	) {
   
-  
-	// [ModelAndView 객체] 생성하기
-	ModelAndView mav = new ModelAndView();	
-  
-	// 총 개수를 구하는 쿼리문이 따로 들어가야함. 페이징 처리를 안 한 [검색된 게시글의 총 개수]   ( 검색만 하고 페이징 처리 X, 검색은 Transaction 의 대상이 X -> 서비스 클래스에 들를필요는 X. (하지만 해놓으면 좋다. )  )
+  	// 총 개수를 구하는 쿼리문이 따로 들어가야함. 페이징 처리를 안 한 [검색된 게시글의 총 개수]   ( 검색만 하고 페이징 처리 X, 검색은 Transaction 의 대상이 X -> 서비스 클래스에 들를필요는 X. (하지만 해놓으면 좋다. )  )
 	int boardTotCnt = this.boardDAO.getBoardListTotCnt( boardSearchDTO );
 			
 	// 전체 게시판에 있는 총 게시물의 개수
 	int boardFullTotCnt = this.boardDAO.getBoardListFullTotCnt( );
 	
+  		//**************************************************************
+  		// 페이징 처리 관련 데이터와 기타 데이터가 저장된 HashMap 객체 얻기		/// ★★ 페이징 처리 안에 검색결과가 들어가야 페이징 처리가 가능함. 
+		// Util 객체의 getPagingMap 라는 메소드 호출로 얻는다.					/// ★★ 따라서 검색 결과의 개수를 얻어야 그 후에 페이징처리가 가능함.
+		//**************************************************************		
+		Map<String, Integer> pagingMap = Util.getPagingMap(					/// 검색된 게시글의 총 개수를 먼저 구하고 난 후에 페이징처리를 해야한다.
+
+				boardSearchDTO.getSelectPageNo()		/// 선택한 페이지번호
+				,boardSearchDTO.getRowCntPerPage()		/// 한 페이지당 보여줄 행의 개수
+				,boardTotCnt							/// [페이징 처리를 안 한 전체 게시글의 개수]  (검색된 게시판의 총 개수)
+				
+		);	
+		
+		
+		//**************************************************************
+  		// BoardSearchDTO 객체의 속성변수 selectPageNo 에 보정된 선택페이지 저장하기.	
+		// BoardSearchDTO 객체의 속성변수 begin_rowNo 에  검색 결과물에서 페이지 번호에 맞게 부분을 가져올 때 시작행 번호 저장하기
+		// BoardSearchDTO 객체의 속성변수 end_rowNo 에    검색 결과물에서 페이지 번호에 맞게 부분을 가져올 때 마지막행 번호 저장하기
+		//**************************************************************
+		 boardSearchDTO.setSelectPageNo( (int)pagingMap.get("selectPageNo") );			/// 보정된 페이지번호를 넣어줌. + 자료형 맞춰줘야함. (자료형 안 맞아도 Integer 객체가 자동으로 기본형으로 바뀜)
+		 boardSearchDTO.setBegin_rowNo( pagingMap.get("begin_rowNo") );					/// DB에서 검색한 결과 중 ... 뭐...?
+		 boardSearchDTO.setEnd_rowNo( pagingMap.get("end_rowNo") );
+  
+  
+	// [ModelAndView 객체] 생성하기
+	ModelAndView mav = new ModelAndView();	
+
 	
 	// BoardDAOImpl 객체의 getBoardList 메소드 호출로 [게시판 목록] 얻기	
   	// boardList 에는 다량의 HashMap 객체의 有
@@ -49,6 +71,7 @@ private BoardService boardService;
   	mav.addObject("boardList", boardList);
  	mav.addObject("boardTotCnt", boardTotCnt );	
 	mav.addObject("boardFullTotCnt", boardFullTotCnt );
+	mav.addObject("pagingMap", pagingMap );
 	
     // 호출된 JSP 페이지로 DB 연동 결과물을 보냄.
   		mav.setViewName("boardList.jsp");						
