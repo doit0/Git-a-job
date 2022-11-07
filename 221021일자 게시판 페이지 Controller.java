@@ -27,13 +27,28 @@ private BoardService boardService;
 
 	public ModelAndView boardList(
 			BoardSearchDTO	boardSearchDTO			/// 검색조건 저장용이라서 테이블과는 관계 없음
+			, HttpSession session			
+	
 	) {
   
+ 		String mid = (String) session.getAttribute( "mid" );	/// "mid"의 자료형은 Object 기 때문에 cast 연산자로 (String)을 붙여줘야함.
+		
+		if(mid == null) {						/// 로그인 없이 BoardList.do를 치고 들어왔을 경우
+		
+			ModelAndView mav = new ModelAndView();	
+			mav.addObject("msg" , "로그인을 해야 이용할 수 있습니다.");
+			mav.setViewName("error.jsp");		/// 호출할 jsp 페이지를 error 로 설정
+			return mav; 				/// DB연동하지 말고 바로 mav 객체 리턴.
+
+			
+  
+  	// 전체 게시판에 있는 총 게시물의 개수
+	int boardFullTotCnt = this.boardDAO.getBoardListFullTotCnt( );
+	
   	// 총 개수를 구하는 쿼리문이 따로 들어가야함. 페이징 처리를 안 한 [검색된 게시글의 총 개수]   ( 검색만 하고 페이징 처리 X, 검색은 Transaction 의 대상이 X -> 서비스 클래스에 들를필요는 X. (하지만 해놓으면 좋다. )  )
 	int boardTotCnt = this.boardDAO.getBoardListTotCnt( boardSearchDTO );
 			
-	// 전체 게시판에 있는 총 게시물의 개수
-	int boardFullTotCnt = this.boardDAO.getBoardListFullTotCnt( );
+
 	
   		//**************************************************************
   		// 페이징 처리 관련 데이터와 기타 데이터가 저장된 HashMap 객체 얻기		/// ★★ 페이징 처리 안에 검색결과가 들어가야 페이징 처리가 가능함. 
