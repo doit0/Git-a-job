@@ -77,7 +77,11 @@
 		
 		board 		<!--  select 의 결과문이 List<Map<String, String>> 자료형에 담김.  -->
 		
-		 order by group_no desc, print_no asc
+		order by group_no desc, print_no asc
+		
+		<![CDATA[
+			) zxcvb) where  RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo} 
+		]]>	
 		
 		
 		<!-- 
