@@ -80,6 +80,7 @@ public class Util {
 			
 			
 			map.put("serialNo_asc"		 , begin_rowNo)	;				/// 정순 일련번호 = 시작행 번호
+			map.put("serialNo_desc"		 ,  totCnt-begin_rowNo+1);
 			
 			map.put("begin_pageNo_perPage", begin_pageNo_perPage)	;
 			map.put("end_pageNo_perPage"  , end_pageNo_perPage)	;			/// 이 데이터들은 후에 BoardController.java와 boardList.jsp 페이지에서 사용할 예정
