@@ -36,6 +36,64 @@
 				
 		
 		 	})
+			
+		
+		//--------------------------------------------------------
+		// 검색결과물이 출력되는 table 태그의 tr태그 [MouseOn] 과 [MouseOut] 했을 때 배경색 바꾸기 				/// 이벤트설정. (JQuery 사용 예정)
+		//--------------------------------------------------------	
+		//  < 방법 1 >
+		$(".searchingResults").find("tr:eq(0)").nextAll().hover(		/// 첫번째 tr 을 뺀 나머지 모두를 잡는 방법 (nextAll)
+																		/// 	$(".searchingResults").find("tr:eq(0)").siblings()    과 같은 태그
+				
+					// 마우스온(= 마우스를 갖다 댔을 때) 했을 때 실행할 자스 코드 (배경색 바꾸기) 설정.
+						function(){					
+							
+							// 마우스를 댄 태그에 class="mouseOnTrBgC" 삽입하기
+							$(this).addClass("mouseOnTrBgC");				/// JQuery 의 메소드 addClass 를 통해서 해당 선택자에 클래스값 추가해준다.
+																			/// 클래스값이 들어가는 순간 CSS 를 부여한 다음 removeClass 하는 순간 CSS 가 사라진다.
+						}
+				
+					// 마우스아웃(=마우스를 떼었을 때) 했을 때 실행할 자스 코드 (원래의 배경색으로 바꾸기) 설정.	
+						, function(i){				
+	
+							// 마우스를 뺀 태그에 class="mouseOnTrBgC" 삭제하기
+							$(this).removeClass("mouseOnTrBgC");				/// JQuery 의 메소드 addClass 를 통해서 해당 선택자에 클래스값 삭제해준다.
+							
+						});			
+				
+				
+				
+	/*		
+		
+		//  < 방법 2 >		
+		var old_bgcolor ;							// 전역변수 old_bgcolor에 원래의 bgcolor 값 구해놓기. (나중에 원래의 배경색으로 바꾸기 위해)
+
+		$(".searchingResults").find("tr:eq(0)").nextAll().hover(		/// 첫번째 tr 을 뺀 나머지 모두를 잡는 방법 (nextAll)
+																		/// 	$(".searchingResults").find("tr:eq(0)").siblings()    과 같은 태그
+		
+				function(){					// 마우스온 했을 때 배경색 바꾸기.
+					
+					 old_bgcolor = $(this).attr( "bgcolor" );
+					 $(this).attr({"bgcolor":"FFD8D8"  });
+				}
+		
+				, function(i){				// 마우스아웃 했을 때 원래의 배경색으로 바꾸기.
+					$(this).attr( "old_bgcolor" );
+
+				})	
+				 
+		//   < 방법 3 >
+		$(".seachingResults").find("tr:eq(0)").nextAll().hover(
+				function(){
+					 $(this).attr({"bgcolor":"FFD8D8"  })			/// JQuery에서 this란? 이벤트가 발생했을 때의 선택자. (특정 이벤트 관련으로 메소드 호출시 실행되는 익명함수 안에서 사용되는 선택자. 특정 이벤트 발생시 선택자.)
+				}
+				,function(i){
+				
+					 	var basic_bgcolor = $(this).attr( "basic_bgcolor" );		///  tr 태그 안에 basic_bgcolor 와 같은 해당 속성명이 있어야함.
+						$(this).attr({"bgcolor": basic_bgcolor  })	
+				});
+		
+		*/
 		 
 		 /// 검색화면에 있는 검색 조건에 있는 것들이 들어가야하니까 post 방식을 사용해야함.
 				
@@ -52,11 +110,14 @@
 		<c:if test="${!empty param.rowCntPerPage}">										
 			formObj.find(".rowCntPerPage").val("${param.rowCntPerPage}");		 		
 		</c:if>
-	
+			
+		<c:if test="${!empty requestScope.pagingMap.selectPageNo}">			/// 선택한 페이지 번호도 value 값을 남겨줘야함.  hidden 태그 조심! 그 안에 잘못된 결과가 나올 가능성이 농후함.		
+			formObj.find(".selectPageNo").val("${requestScope.pagingMap.selectPageNo}");	/// 파라미터값으로 선택한 페이지번호를 넣어주면 이는 보정된 값이 아니기 때문에 (BoardController 속 HashMap 객체 안에 있는 값이 진짜 보정된 값임. selectPageNo 안에 있는 파라미터값은 보정된 값이 아님.)
+		</c:if>				
 		
 		formObj.find(".keyword2").val("${param.keyword2}");	
 		
-		})
+		})   // body 태그 끝나는 곳
 
 	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
 			
@@ -286,8 +347,11 @@
 		%>
 		<!-- {requestScope.boardList} 중 boardList는  BoardController의  boardList 와 같은 의미이다.      이 모든 EL, JSTL 코드는 내부적으로 결국 자바코드로 바뀐다.  -->
 		<c:forEach var="board" items="${requestScope.boardList}" varStatus="loopTagStatus">   <!--  이 태그가 JSTL 태그. 그 중 c:forEach 가 자바코드 중 반복문임. -->
-			<tr bgcolor="${loopTagStatus.index%2==1?'lightgray':'white'}">
-			<td>${ board.b_no }			</td>		<!-- ($){} 형식으로 쓰는 것이 EL 태그.     (점).뒤에 HashMap 객체의 키값을 넣어준다. -->
+			<tr bgcolor="${loopTagStatus.index%2==1?'lightgray':'white'}"
+				style="cursor:pointer"
+				onClick="goBoardDetailForm( ${ board.b_no } )"	
+			>		<!-- onclick 자스 코딩 안에 매개변수로 EL태그 삽입. 일련번호 PK를 넣음으로써 각 게시글을 찾으러 들어가는 것 = 일련번호로 찾기 를 할 수 있다.-->
+			<td> 	${requestScope.pagingMap.serialNo_desc - loopTagStatus.index} 				</td>		<!-- ($){} 형식으로 쓰는 것이 EL 태그.     (점).뒤에 HashMap 객체의 키값을 넣어준다. -->
 			
 			<td>
 			
