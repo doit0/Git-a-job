@@ -27,19 +27,15 @@ private BoardService boardService;
 
 	public ModelAndView boardList(
 			BoardSearchDTO	boardSearchDTO			/// 검색조건 저장용이라서 테이블과는 관계 없음
-			, HttpSession session			
+				
 	
 	) {
   
- 		String mid = (String) session.getAttribute( "mid" );	/// "mid"의 자료형은 Object 기 때문에 cast 연산자로 (String)을 붙여줘야함.
-		
-		if(mid == null) {						/// 로그인 없이 BoardList.do를 치고 들어왔을 경우
-		
-			ModelAndView mav = new ModelAndView();	
-			mav.addObject("msg" , "로그인을 해야 이용할 수 있습니다.");
-			mav.setViewName("error.jsp");		/// 호출할 jsp 페이지를 error 로 설정
-			return mav; 				/// DB연동하지 말고 바로 mav 객체 리턴.
-
+ 			if( boardSearchDTO.getDate() != null) {
+			for( int i=0 ; i< boardSearchDTO.getDate().size() ; i++) {
+				System.out.println(  boardSearchDTO.getDate().get(i) );
+			}
+		}
 			
   
   	// 전체 게시판에 있는 총 게시물의 개수
