@@ -44,6 +44,19 @@
 						)						
 			</if>								
 
+				<if test="date!=null">	<!--   DTO 객체의속성변수명 인 date -->
+			<foreach collection="date" item="xxx"  open="and (   " close=" )" separator=" or "> 
+					to_char(
+						 sysdate ${xxx}					<!--  쿼리문 안에 직접적으로 들어갈 데이터를 씀. 
+						 									  #을 사용하면 싱글쿼트가 들어가기 때문에 안됨
+						 									  그냥 $를 넣으면 그 값이 나옴 -> if 문 없이 쿼리 작성 가능함 -->
+						
+					,'YYYYMMDD') = to_char( reg_date,  'YYYYMMDD') 		
+									
+			</foreach>	 					
+		</if>	
+	
+	
 																		
 	</sql>			
 	<select id="getBoardList"  resultType="hashmap">   <!--  select 쿼리에 n행 m열 을 리턴하더라도 resultType 에는 !! 1행의 데이터만 적어줘야함 !!  -->
