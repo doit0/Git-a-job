@@ -101,7 +101,7 @@
 		var formObj = $(".boardSearchForm");
 			
 		formObj.find(".keyword1").val("${param.keyword1}");
-		
+		formObj.find(".keyword2").val("${param.keyword2}");
 		
 		<c:if test="${!empty param.or_And}">										/// 비어있지 않을 때만 파라미터 값을 넣어줘~ 라는 의미
 			formObj.find(".or_And").val("${param.or_And}");		 		///  select  의 경우 로그인해서 들어갔을 때는 ($){param.or_And} 의 값이 없음. 결국 길이가 없는 select를 선택하게 됨. (디폴트로 or 가 선택될 수 있게 c코어 태그로 EL 만들어주기)
@@ -114,9 +114,35 @@
 		<c:if test="${!empty requestScope.pagingMap.selectPageNo}">			/// 선택한 페이지 번호도 value 값을 남겨줘야함.  hidden 태그 조심! 그 안에 잘못된 결과가 나올 가능성이 농후함.		
 			formObj.find(".selectPageNo").val("${requestScope.pagingMap.selectPageNo}");	/// 파라미터값으로 선택한 페이지번호를 넣어주면 이는 보정된 값이 아니기 때문에 (BoardController 속 HashMap 객체 안에 있는 값이 진짜 보정된 값임. selectPageNo 안에 있는 파라미터값은 보정된 값이 아님.)
 		</c:if>				
+
+		// class="min_year"  를 가진 태그  입력양식에 "min_year" 이라는 파라미터명에 해당하는 파라미터값을 넣기
+		<c:if test="${!empty param.min_year }">			
+			formObj.find(".min_year").val("${param.min_year }");		 			
+		</c:if>		
 		
-		formObj.find(".keyword2").val("${param.keyword2}");	
+		// class="min_month"  를 가진 태그  입력양식에  "min_month" 이라는 파라미터명에 해당하는 파라미터값을 넣기
+		<c:if test="${!empty param.min_month }">			
+		formObj.find(".min_month").val("${param.min_month }");		 			
+		</c:if>	
 		
+		
+		// class="max_year"  를 가진 태그  입력양식에 max_year" 이라는 파라미터명에 해당하는 파라미터값을 넣기
+		<c:if test="${!empty param.max_year }">			
+		
+		formObj.find(".max_year").val("${param.max_year }");		 			
+		</c:if>	
+		
+		// class="max_month"  를 가진 태그  입력양식에  "max_month" 이라는 파라미터명에 해당하는 파라미터값을 넣기
+		<c:if test="${!empty param.max_month }">			
+		formObj.find(".max_month").val("${param.max_month }");		 			
+		</c:if>			
+
+			
+		
+		<c:forEach var="date" items="${paramValues.date}" > 					/// 체크박스는 이름이 여러개, 들어오는 데이터도 여러개. 따라서 items에 1개 이상의 데이터가 배열로 들어감.
+			formObj.find(".date").filter("[value='${date}']").prop("checked", true);	/// 반복문이 돌면서 체크박스에 체크된 값이 들어가면 된다..?
+		</c:forEach>
+					
 		})   // body 태그 끝나는 곳
 
 	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
@@ -229,7 +255,134 @@
 	
 	}
 	
+	// 날짜 범위 관련 select 태그 4개의 유효성 체크하기	
+	function checkYMRange( ){
 		
+		//-----------------------------------------------------------------
+		/// 각 입력양식을 관리하는 JQuery 객체의 메위주가 들어가야함.
+		var formObj      = $("[name='boardSearchForm']"); 
+		var min_yearObj	 = $(".min_year"); 			
+		var min_monthObj = $(".min_month"); 		
+		var max_yearObj  = $(".max_year"); 
+		var max_monthObj = $(".max_month"); 
+		
+		//-----------------------------------------------------------------
+		var  min_yearVal  = min_yearObj.val();
+		var  min_monthVal = min_monthObj.val();
+		var  max_yearVal  = max_yearObj.val();
+		var  max_monthVal = max_monthObj.val();
+		
+		//-----------------------------------------------------------------		
+		
+		//-----------------------------------------------------------------		
+		/// <1> 년도 없이 월만 들어갈 경우, 값 비워주기
+		
+		/// <2-2>  년도만 넣었을 때 자동으로 넣어지는 최대년/월이 최소년도보다 크면 멈추기
+		/// 이 상황의 사유: 웹브라우저 화면 입력양식에는 01을 넣었지만 자바스크립트에선 01을 넣지 않았기 때문에 ( value 값을 넣지 않음.)
+		/// 				따라서 자스에서도 value 값을 넣어줘야함
+		
+		if(   min_yearVal == "" && min_monthVal != "" ){
+			alert("년도가 없으면 월을 선택할 수 없음");
+			min_monthObj.val("");
+			min_monthVal ="01";
+			return;
+		}
+		
+		if(   max_yearVal == "" && max_monthVal != "" ){
+			alert("년도가 없으면 월을 선택할 수 없음");
+			max_monthObj.val("");
+			max_monthVal = "12";
+			return;
+		}
+		//-----------------------------------------------------------------		
+		
+		//-----------------------------------------------------------------		
+		/// <2>  min_yearVal  + min_monthVal 보다 max_yearVal + max_monthVal이 크면 경고를 띄우고 양쪽을 비우게 만들기
+	
+		if( min_yearVal != ""  &&  min_monthVal != "" &&   max_yearVal != ""  &&  max_monthVal != ""  ){
+			if( min_monthVal.length==1 ){ min_monthVal = "0"+ min_monthVal; }
+			if( max_monthVal.length==1 ){ max_monthVal = "0"+ max_monthVal; }
+
+				if( min_yearVal + min_monthVal > max_yearVal + max_monthVal){				/// 숫자문자를 어떻게 부등호로 비교함?   --> <주의!!> 숫자문자를 비교할 땐 숫자로 바꾸던가, 길이가 똑같으면 비교가 가능하다. (월의 길이가 다르다면.. 이 소스는 틀립니다.)
+					alert("최소 년/월이 최대 년/월보다 크면 안됩니다.");
+				
+					max_yearObj.val("");
+					max_monthObj.val("");
+					
+					
+				}
+				return;
+			}
+		//-----------------------------------------------------------------		
+		
+		//-----------------------------------------------------------------		
+		/// <3> (연도는 있는데 월이 없을 경우) 최소 연도만 넣었을 때 1월을, 최대연도만 넣었을 때 12월을 자동삽입해주기
+		
+		if( min_yearVal != "" &&  min_monthVal == "" ){ min_monthObj.val("01"); min_monthVal ="01"; }		/// 출력되는  value 값을 주의해서 입력해야한다.
+		if( max_yearVal != "" &&  max_monthVal == "" ){ max_monthObj.val("12"); max_monthVal = "12"; }
+		//-----------------------------------------------------------------		
+
+		
+	}	// 함수 checkYMRange 끝나는 곳
+	
+
+	
+	
+	//-----------------------------------------------------------------		
+	/// <4> 날짜 비움버튼으로 날짜 비우기
+	function emptyYMRange(){
+		
+		var formObj      = $("[name='boardSearchForm']"); 
+		formObj.find(".min_year").val("");
+		formObj.find(".min_month").val("");
+		formObj.find(".max_year").val("");
+		formObj.find(".max_month").val("");
+	
+		
+	} // 함수 emptyYMRange 끝나는 곳
+	
+	
+	
+	//-----------------------------------------------------------------		
+	/// <5> 이번달을 누르면 함수 작동되서 날짜의 범위가 맞게 만들기.
+	function setYMRange_to_thisYM(  ){
+
+			var todayObj = new Date(); 
+			var xxxYear = todayObj.getFullYear();
+		    var xxxMonth = todayObj.getMonth()+1;                /// Date 객체는 월을 0~11까지 리턴한다. 그러니까 값을 구할 땐 -1하고 데이터가 나왔을 땐 +1하는 거 잊지 말기.
+		    	if( xxxMonth<10 ){ xxxMonth = "0" + xxxMonth; }
+		
+		    
+			var formObj      = $("[name='boardSearchForm']"); 
+			formObj.find(".min_year").val(xxxYear); 
+			formObj.find(".max_year").val(xxxYear); 
+			formObj.find(".min_month").val(xxxMonth); 
+			formObj.find(".max_month").val(xxxMonth); 
+
+	   
+		} // 함수 setYMRange_to_thisYM 끝나는 곳
+		
+	//-----------------------------------------------------------------		
+	/// <6> 올해 버튼을 누르면 함수 작동되서 날짜의 범위가 맞게 만들기.	
+	function setYMRange_to_thisYear(){
+			
+		var todayObj = new Date(); 
+		var xxxYear = todayObj.getFullYear();
+	    var xxxMonth = todayObj.getMonth()+1;                /// Date 객체는 월을 0~11까지 리턴한다. 그러니까 값을 구할 땐 -1하고 데이터가 나왔을 땐 +1하는 거 잊지 말기.
+	    	if( xxxMonth<10 ){ xxxMonth = "0" + xxxMonth; }
+	
+	    
+		var formObj  = $("[name='boardSearchForm']"); 
+		formObj.find(".min_year").val(xxxYear); 
+		formObj.find(".max_year").val(xxxYear); 
+		formObj.find(".min_month").val("01"); 
+		formObj.find(".max_month").val("12"); 
+
+			
+			
+			
+			
+		}	// 함수 setYMRange_to_thisYear 끝나는 곳		
 		
 </script>
 
@@ -269,6 +422,51 @@
 			
 			 <input type="text" name="keyword2" class="keyword2" value="">			
 				
+				
+						 <!-- checkYMRange( )으로 최신 연도 넣어주기, 연도가 없으면 월 못 들어가게하기, min_year 혹은 max_year 중 하나만 나와도 검색 가능하게 하기  -->
+			<select name="min_year" class="min_year"  onChange="checkYMRange( )">		<!--  onChange = change 이벤트. 목록을 바꿔 선택하는 것. 마우스/키보드 등 다양하게 이벤트를 일으킬 수 있다.   (따라서 onClick으로 하면 안 됨.) -->
+				<option value=""  >
+				<option value="2022">2022
+				<option value="2021">2021
+				<option value="2020">2020
+			</select>년				
+				<select name="min_month"  class="min_month" onChange="checkYMRange( )">
+					<option value="">
+					<option value="01">01
+					<option value="02">02		
+					<option value="03">03		
+					<option value="04">04
+					<option value="05">05
+					<option value="06">06
+					<option value="07">07
+					<option value="08">08
+					<option value="09">09
+					<option value="10">10
+					<option value="11">11
+					<option value="12">12
+				</select>월 ~
+				
+			<select name="max_year"   class="max_year"  onChange="checkYMRange( )">
+					<option value="" >
+					<option value="2022">2022
+					<option value="2021">2021
+					<option value="2020">2020
+				</select>년
+				<select name="max_month"  class="max_month" onChange="checkYMRange( )">
+					<option value="">
+					<option value="01">01
+					<option value="02">02
+					<option value="03">03
+					<option value="04">04
+					<option value="05">05
+					<option value="06">06
+					<option value="07">07
+					<option value="08">08
+					<option value="09">09
+					<option value="10">10
+					<option value="11">11
+					<option value="12">12
+				</select>월	
 			<!-- ------------------------------------------------------------------------------ -->
 			<!--  클릭한 페이지번호를 저장할 hidden 입력양식 선언. 페이징 처리 관련 데이터이다. -->
 			<!-- ------------------------------------------------------------------------------ -->
@@ -277,8 +475,17 @@
 			 <!-- ------------------------------------------------------------------------------ -->
 			<!--  한 화면에서 보여지는 행의 개수를 저장할 hidden 태그 선언. -->
 			<!-- ------------------------------------------------------------------------------ -->
-			<input type="hidden" name="rowCntPerPage" class="rowCntPerPage" value="10">				<!-- 한 페이지 당 나와야할 페이지 번호,  출력 행의 개수 필요. -->
-			 			
+			<!-- <input type="hidden" name="rowCntPerPage" class="rowCntPerPage" value="10">	 -->			<!-- 한 페이지 당 나와야할 페이지 번호,  출력 행의 개수 필요. -->
+						 <br>
+			 	<!--  행 보기 누르는 것도 일종의 검색버튼 누르기와 같은 것. -->
+			 <select name="rowCntPerPage" class="rowCntPerPage" onChange="boardSearch( );">		
+			 	<option value="10">10
+			 	<option value="15">15
+			 	<option value="20">20
+			 	<option value="25">25
+			 	<option value="30">30
+			 </select>행 보기
+			
 			<!-- ------------------------------------------------------------------------------ -->
 			<!--  한 화면에서 보여지는 페이지 번호의 개수를 저장할 hidden 태그 선언. -->
 			<!-- ------------------------------------------------------------------------------ -->
@@ -291,11 +498,19 @@
 	</form>
 
 
+<div class="searchingResults">
 
+
+	<table border=0 cellpadding=5 cellspacing=0 style="border-collapse:collapse"  align="center" width="700px">
+		<caption>	
+
+			검색결과 : 총 ${ requestScope.boardTotCnt } /  ${ requestScope.boardFullTotCnt } 개
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 	<table border=1 cellpadding=5 style="border-collapse:collapse">
-		
+	</caption>
+	<span style="cursor:pointer;" class="newRegBtn">[새글쓰기]</span>	
 	<tr bgcolor="skyblue">
 		<th> 번호 </th>  <th> 제목 </th>  <th> 작성자 </th>   <th> 조회수 </th>  <th> 등록일 </th>
 		
@@ -372,7 +587,7 @@
 			
 	</c:forEach>
 	</table>
-
+	</div>	
 
 <!-- 검색된 게시글의 개수가 0개보다 크면, 즉 검색된 게시물이 존재하면  			을 c 코어 태그로 표현함-->
 	<c:if test="${requestScope.boardTotCnt>0 }" >			
@@ -394,7 +609,7 @@
 			
 			<!-- 만약에 선택한 페이지번호와 출력되는 페이지번호가 같으면-->
 			<c:if test="${ requestScope.pagingMap.selectPageNo==no}">
-				<span style="cursor:pointer" >	${no} </span> &nbsp; 
+				<span style="cursor:pointer"  >	${no} </span> &nbsp; 
 			</c:if>
 		</c:forEach>	
 	
