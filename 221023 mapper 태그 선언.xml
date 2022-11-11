@@ -56,7 +56,16 @@
 			</foreach>	 					
 		</if>	
 	
-	
+		
+			<!--  hidden 태그를 이용해서 JSP 페이지에서 작업한 후 DB에서 작업하는 방법 -->
+			<if test="min_year_month!=null and min_year_month.length()>0" >
+					and  reg_date	&gt;= to_date( #{min_year_month}, 'YYYY-MM-DD')
+			</if>
+				
+			<if test=" max_year_month!=null and max_year_month.length()>0" >
+					and  reg_date	&lt;= to_date( #{max_year_month}, 'YYYY-MM-DD')
+			</if>				
+					
 																		
 	</sql>			
 	<select id="getBoardList"  resultType="hashmap">   <!--  select 쿼리에 n행 m열 을 리턴하더라도 resultType 에는 !! 1행의 데이터만 적어줘야함 !!  -->
@@ -91,7 +100,24 @@
 		board 		<!--  select 의 결과문이 List<Map<String, String>> 자료형에 담김.  -->
 		
 		order by group_no desc, print_no asc
-		
+	
+		<!--  [sql id="boardWhere"] 태그 안에 삽입된 SQL 구문 삽입하기-->
+		 <include refid="boardWhere"/>		
+		 
+		  <!-- sort가 null 이거나 0일 경우에만   -->
+		<if test="sort==null or sort.length()==0" >				
+		<!--  그렇다고  length() 가 먼저 나오면 안됨.. String 객체가 먼저 만들어진 게 아닐 경우 length로 먼저 확인할 경우,, null 이 아닌 걸 확인하지 않았으니 당연히 에러가 터짐. -->
+			order by group_no desc, print_no asc
+		</if>
+					
+		 <!-- sort가 null 이 아니거나 0이 아닐 경우에만  -->
+		<if test=" sort!=null and sort.length()>0" >
+			order by ${sort}				
+			<!-- sort 라는 속성변수 안의 값이 고대로 나와야하기 때문에  #이 아닌  $ 가 들어가야함 -->
+		</if>	
+		 
+		 
+		 
 		<![CDATA[
 			) zxcvb) where  RNUM >= #{begin_rowNo} and RNUM <= #{end_rowNo} 
 		]]>	
