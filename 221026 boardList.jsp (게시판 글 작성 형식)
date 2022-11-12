@@ -143,6 +143,41 @@
 			formObj.find(".date").filter("[value='${date}']").prop("checked", true);	/// 반복문이 돌면서 체크박스에 체크된 값이 들어가면 된다..?
 		</c:forEach>
 					
+		//--------------------------------------------------------	
+		// class="min_year"  를 가진 태그  입력양식에 "min_year" 이라는 파라미터명에 해당하는 파라미터값을 넣어주기
+
+		<c:if test="${!empty param.min_year }">			
+			formObj.find(".min_year").val("${param.min_year }");		 			
+		</c:if>		
+		
+		//--------------------------------------------------------
+		// class="min_month"  를 가진 태그  입력양식에 "min_month" 이라는 파라미터명에 해당하는 파라미터값을 넣어주기		
+		
+		<c:if test="${!empty param.min_month }">			
+			formObj.find(".min_month").val("${param.min_month }");		 			
+		</c:if>	
+		
+		//--------------------------------------------------------
+		// class="max_year"  를 가진 태그  입력양식에 "max_year" 이라는 파라미터명에 해당하는 파라미터값을 넣어주기
+		
+		<c:if test="${!empty param.max_year }">			
+			formObj.find(".max_year").val("${param.max_year }");		 			
+		</c:if>	
+	
+		//--------------------------------------------------------
+		// class="max_month"  를 가진 태그  입력양식에 "max_month" 이라는 파라미터명에 해당하는 파라미터값을 넣어주기
+		<c:if test="${!empty param.max_month }">				
+			formObj.find(".max_month").val("${param.max_month }");		 			
+		</c:if>			
+					
+					
+					
+					
+					
+					
+					
+					
+					
 		})   // body 태그 끝나는 곳
 
 	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
@@ -159,6 +194,29 @@
 		
 	// 검색 버튼 클릭했을 때 호출되는 함수 선언
 	function boardSearch( ){					/// 검색버튼 누르자마자 작동됨.
+		
+		var min_year = $(".min_year").val();
+		var min_month= $(".min_month").val();
+		var max_year = $(".max_year").val();
+		var max_month= $(".max_month").val();
+		
+		if( min_year!="" &&  min_month!="" ){
+			$(".min_year_month").val( min_year +"-" + min_month + "-01"  );		
+		}	/// 완벽하게 문자화되어서 데이터 보낼 수 있도록 min_year과 min_month 사이에 길이가 없는 데이터나 "-" 를 사이에 붙이며 ㄴ된다.
+		
+		
+
+			if( max_year!="" &&  max_month!="" ){
+				$(".max_year_month").val( max_year 
+										+"-" 
+										+ max_month
+										+"-" 
+										+ new Date ( parseInt(max_year, 10), parseInt(max_month, 10), 0 	 ).getDate() 	/// month 를 -1 해야 우리가 아는 값. 근데 굳이 -1 안하면 다음달의 값이 나옴.
+										/// Date 객체로 년/월/일 이 들어감. .getDate()를 함으로써 그 달의 마지막 날짜가 나옴.
+										);
+					}
+		
+		
 		
 		//--------------------------------------------------------
 		// 입력한 키워드 가져와서 변수 keyword1에 저장하기				///  공백이 있는 경우의 유효성 체크를 해줘야함.
@@ -225,6 +283,8 @@
 	
 
 		$(".or_And").val("or");	
+		
+		$(".date").prop("checked", false);
 		
 		// class=boardSearchBtn 가진 태그에 클릭이벤트 발생 시키기	
 		$(".boardSearchBtn").click();
@@ -467,6 +527,19 @@
 					<option value="11">11
 					<option value="12">12
 				</select>월	
+				
+				
+			<input type ="hidden" name="min_year_month" class="min_year_month" >			<!-- min_year +  minmonth -01(날짜) 이런식으로 붙여서 사용할 수 있는 태그 따로 만들기-->
+			<input type ="hidden" name="max_year_month" class="max_year_month" >
+			<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<input type ="hidden" name="sort" class="sort" >
+			
+			
+			<!--  날짜 범위를 특정 범위에 맞게 작업하기  -->
+			<span style="cursor:pointer" onClick="setYMRange_to_thisYM()"> [ 이번 달 ]</span>
+			<span style="cursor:pointer" onClick="setYMRange_to_thisYear()"> [ 올해 ]</span>
+			<span style="cursor:pointer" onClick="emptyYMRange()"> [ 날짜 비움 ]</span>
+							
 			<!-- ------------------------------------------------------------------------------ -->
 			<!--  클릭한 페이지번호를 저장할 hidden 입력양식 선언. 페이징 처리 관련 데이터이다. -->
 			<!-- ------------------------------------------------------------------------------ -->
@@ -512,8 +585,10 @@
 	</caption>
 	<span style="cursor:pointer;" class="newRegBtn">[새글쓰기]</span>	
 	<tr bgcolor="skyblue">
-		<th> 번호 </th>  <th> 제목 </th>  <th> 작성자 </th>   <th> 조회수 </th>  <th> 등록일 </th>
-		
+		<th> 번호 </th>  <th> 제목 </th>  <th> 작성자 </th>   
+		<th><span  style="cursor:pointer;" name="readcount" class="sortHeader" onclick="xxx('.sortHeader', 'readcount'))" >  조회수 </span> </th>  
+		<th><span  style="cursor:pointer;" name="reg_date" class="sortHeader" >  등록일 </span> </th>
+
 			
 		
 		<%
