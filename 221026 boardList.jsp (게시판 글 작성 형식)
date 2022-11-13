@@ -34,8 +34,39 @@
 		 		document.boardRegForm.submit();
 				
 				
+				
+		//--------------------------------------------------
+		// 게시판 검색물 헤더를 클릭하면 실행할 자스 코딩 설정하기.
+		//--------------------------------------------------			 
+		$(".sortHeader").click(function(){		// sort 의 기준을 update 시키는 것. 이것의 흔적을 어떻게 남기는 게 좋을까?
+			
+			var thisObj = $(this);
+			var text = thisObj.text().trim();				/// span 태그가 끌어안고 있는 게 뭔지 text 메소드를 통해 얻을 수 있음.
+			
+			if ( text=="조회수"){							/// 의도: 조회수 오름차순하려고 함.
+				$(".sort").val("readcount asc")			/// hidden 태그에 value에 readcount asc (조회수 오름차순으로 정렬) 이라고 넣어주기
+			}
+			else if ( text=="조회수▲"){					/// 의도: 조회수 내림차순하려고 함.
+				$(".sort").val("readcount desc")			
+			}
+			else if ( text == "조회수▼"){					/// 의도: 처음상태로 원상복귀하려고 함.
+				$(".sort").val("");			
+			}
+			
+			
+			else if ( text == "등록일"){					/// 의도: 등록일 오름차순하려고 함. (예전 게시물부터 나옴 (날짜가 작은 순서.))
+				$(".sort").val("reg_date asc")			
+			}
+			else if ( text == "등록일▲"){					/// 의도: 등록일 내림차순하려고 함.
+				$(".sort").val("reg_date desc")			
+			}
+			else if ( text == "등록일▼"){					/// 의도: 처음상태로 원상복귀하려고 함.
+				$(".sort").val("");			
+			}				
+			
+			$(".boardSearchBtn").click();	
 		
-		 	})
+		})
 			
 		
 		//--------------------------------------------------------
@@ -113,7 +144,11 @@
 			
 		<c:if test="${!empty requestScope.pagingMap.selectPageNo}">			/// 선택한 페이지 번호도 value 값을 남겨줘야함.  hidden 태그 조심! 그 안에 잘못된 결과가 나올 가능성이 농후함.		
 			formObj.find(".selectPageNo").val("${requestScope.pagingMap.selectPageNo}");	/// 파라미터값으로 선택한 페이지번호를 넣어주면 이는 보정된 값이 아니기 때문에 (BoardController 속 HashMap 객체 안에 있는 값이 진짜 보정된 값임. selectPageNo 안에 있는 파라미터값은 보정된 값이 아님.)
-		</c:if>				
+		</c:if>		
+		
+		<c:forEach var="date" items="${paramValues.date}" > 								/// 체크박스는 이름이 여러개, 들어오는 데이터도 여러개. 따라서 items에 1개 이상의 데이터가 배열로 들어감.
+			formObj.find(".date").filter("[value='${date}']").prop("checked", true);	/// 반복문이 돌면서 체크박스에 체크된 값이 들어가면 된다..?
+		</c:forEach>
 
 		// class="min_year"  를 가진 태그  입력양식에 "min_year" 이라는 파라미터명에 해당하는 파라미터값을 넣기
 		<c:if test="${!empty param.min_year }">			
@@ -169,8 +204,46 @@
 		<c:if test="${!empty param.max_month }">				
 			formObj.find(".max_month").val("${param.max_month }");		 			
 		</c:if>			
+				
+		// class=sort 를 가진 hidden 태그의 value 값을  sort 라는 파라미터명의 파라미터값으로 넣어주기
+
+		<c:if test="${!empty param.sort }">
+			formObj.find(".sort").val("${param.sort }");
+	
+			// class=sortHeader 를 가진  태그, 즉 헤더들을 잡고 아래에 지정된 자스 코드를 실행하기 
+			$(".sortHeader").each( function(){						/// 조회수를 끌어안고 있는 span 태그. class 값이 모두 sort 이다.
+				
+				var thisObj = $(this);
+				var text = thisObj.text().trim();
+				
+				// i번째 태그가 안고 있는 문자에서 "▲"와 "▼" 모두 제거하기
+				text = text.replace("▲", "").replace("▼", ""); 	/// replace메소드 2개 사용 -> 조회수 다음에 뭐가 나왔던지 둘 다 없애기.
+				
+				// i번째 태그 안에 "▲"와 "▼" 모두 제거하고 남은 header 문자를 삽입하기
+				thisObj.text(text);			//  ▲ ▼ 둘 다 없앤다음에 text 안에 있어야할 거 넣어주기
 					
+					//  sort 라는 파라미터명의 파라미터값이 "readcount asc"이고 i번째 태그가 안고 있는 문자가 "조회수"라면
+					if ("${param.sort}"=="readcount asc" &&  text =="조회수"){							/// hidden 태그 안에 있는 데이터를 보고 ▲ ▼ 중 어느걸 넣어줘야할지 정하는 것
+						thisObj.append("▲");
+					}
+					//  sort 라는 파라미터명의 파라미터값이 "readcount desc"이고 i번째 태그가 안고 있는 문자가 "조회수"라면
+					else if ("${param.sort}"=="readcount desc" &&  text =="조회수"){			
+						thisObj.append("▼");
+					}
+					//  sort 라는 파라미터명의 파라미터값이 "reg_date asc"이고 i번째 태그가 안고 있는 문자가 "등록일"라면
+					else if ("${param.sort}"=="reg_date asc" &&  text =="등록일"){				
+						thisObj.append("▲");
+					}					
+				//  sort 라는 파라미터명의 파라미터값이 "reg_date desc"이고 i번째 태그가 안고 있는 문자가 "등록일"라면
+					else if ("${param.sort }"=="reg_date desc" &&  text =="등록일"){		
+						thisObj.append("▼");
+					}		
+				
+					/// 해당되지 않는 것들은 (아무것도 걸리지 않으면 역순/정순만 제거하고 끝나는 것. ) 아무것도 나오지 않는다..? 역순정순이 없다.. 뭐 그렇게 말씀하심.
 					
+				} )							
+			
+		</c:if>				
 					
 					
 					
