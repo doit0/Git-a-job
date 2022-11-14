@@ -37,7 +37,9 @@
 				
 		//--------------------------------------------------
 		// 게시판 검색물 헤더를 클릭하면 실행할 자스 코딩 설정하기.
-		//--------------------------------------------------			 
+		//--------------------------------------------------	
+		<c:if test="${sessionScope.mid =='abc'}">	
+		
 		$(".sortHeader").click(function(){		// sort 의 기준을 update 시키는 것. 이것의 흔적을 어떻게 남기는 게 좋을까?
 			
 			var thisObj = $(this);
@@ -67,7 +69,9 @@
 			$(".boardSearchBtn").click();	
 		
 		})
-			
+</c:if>	 
+
+
 		
 		//--------------------------------------------------------
 		// 검색결과물이 출력되는 table 태그의 tr태그 [MouseOn] 과 [MouseOut] 했을 때 배경색 바꾸기 				/// 이벤트설정. (JQuery 사용 예정)
@@ -167,6 +171,8 @@
 		formObj.find(".max_year").val("${param.max_year }");		 			
 		</c:if>	
 		
+		
+		
 		// class="max_month"  를 가진 태그  입력양식에  "max_month" 이라는 파라미터명에 해당하는 파라미터값을 넣기
 		<c:if test="${!empty param.max_month }">			
 		formObj.find(".max_month").val("${param.max_month }");		 			
@@ -207,6 +213,7 @@
 				
 		// class=sort 를 가진 hidden 태그의 value 값을  sort 라는 파라미터명의 파라미터값으로 넣어주기
 
+		<c:if test="${sessionScope.mid =='abc'}">	
 		<c:if test="${!empty param.sort }">
 			formObj.find(".sort").val("${param.sort }");
 	
@@ -243,14 +250,8 @@
 					
 				} )							
 			
-		</c:if>				
-					
-					
-					
-					
-					
-					
-					
+			</c:if>				
+		</c:if>						
 		})   // body 태그 끝나는 곳
 
 	function goBoardDetailForm( b_no  ){			/// 클릭한 게시판 행의 고유번호가 매개변수로 들어옴.
@@ -659,10 +660,29 @@
 	<span style="cursor:pointer;" class="newRegBtn">[새글쓰기]</span>	
 	<tr bgcolor="skyblue">
 		<th> 번호 </th>  <th> 제목 </th>  <th> 작성자 </th>   
-		<th><span  style="cursor:pointer;" name="readcount" class="sortHeader" onclick="xxx('.sortHeader', 'readcount'))" >  조회수 </span> </th>  
-		<th><span  style="cursor:pointer;" name="reg_date" class="sortHeader" >  등록일 </span> </th>
-
+		
+		
+		
+				
+		<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->
+		<!--  "HttpSession 객체에 mid 라는 키값으로 저장된 문자가 abc 라면"      ======  admin 계정으로 접속했을 때
+				정렬 가능한 헤더 보이기 -->
+		<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->	
+		<c:if test ="${sessionScope.mid=='abc'}">  <!--    httpSession 객체에 저장된 걸 키값으로 꺼낼 때 sessionScope을 사용함. -->
+													<!--  mid 변수 안에 무언가 들어있는지 확인할 때 사용하는 것. -->
+			<th><span  style="cursor:pointer;" name="readcount" class="sortHeader"  >  조회수 </span> </th>  
+			<th><span  style="cursor:pointer;" name="reg_date" class="sortHeader" >  등록일 </span> </th>	
+		</c:if>
+		
+		<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->			
+		<!--  "HttpSession 객체에 mid 라는 키값으로 저장된 문자가 abc 가 아니라면"      ======  admin이 아닌 계정으로 접속했을 때
+			정렬 불가능한 헤더 보이기  (클릭 자체가 불가능하도록 만들기) -->	
+		<!--mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-->	
 			
+		<c:if test ="${sessionScope.mid!='abc'}">		<!--  httpSession 객체에 저장된 걸 키값으로 꺼낼 때 sessionScope을 사용함. -->
+			<th> 조회수 </span> </th>  
+			<th> 등록일 </span> </th>			
+		</c:if>	
 		
 		<%
 		
