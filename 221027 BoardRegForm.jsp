@@ -36,11 +36,148 @@
 				
 		})
 		
-		
-		
+		//*********************************************************************
 		// 유효성 체크. 비동기 방식으로 웹서버에 접속하는 함수 선언
+		//*********************************************************************
+		function BoardregBtnCheck(){
+				
+			//---------------------------------------------------
+			// 게시판 [새 글 쓰기] 또는 [댓글 쓰기] 관련 입력양식의 유효성 체크하기
+			// 	boardRegForm writer		subject		email		content		pwd
+			//---------------------------------------------------
+			
+			var formObj = $("[name='boardRegForm']");
+			
+			// 작성자 이름 가져와서 변수 writer  에 저장하기
+			var writer = formObj.find(".writer").val();
+			// 작성자 이름이 한글 로 2~10자 보다 크면 경고하고 함수 중단
+			var regExp = new RegExp(/^[가-힣]{2,10}$/); 	/// 한글 체크
+			if( regExp.test(writer)==false ){
+				alert("작성자 이름은 한글 2~10까지 입력해야합니다.");
+				formObj.find(".writer").val("");
+				return;
+			}		
+			
+			//---------------------------------------------------
+			// 제목	가져와서 변수 subject 에 저장하기
+			var subject = formObj.find(".subject").val();
+			
+				// 만약에 subject 변수안의 데이터가 String 이 아니면 "" 저장하기
+				if( typeof(subject)!="string" ){subject = ""; }		/// String 객체가 들어왔는지 확인하는 절차 (만약 string 객체가 아니라면 길이가 없는 문자 데이터 넣어주기) 
+			
+				// subject 변수안의 데이터의 앞뒤 공백 제거하기
+				subject = $.trim(subject);								/// 앞뒤 공백 제거
+				
+				// subject 변수안의 데이터를 웹화면에 삽입하기
+				formObj.find(".subject").val(subject);						/// 자스 안의 데이터가 앞뒤 공백 제거된 것. 그러니 변수 안의 데이터에도 공백 제거한 것 넣어주기
+				
+				// 제목이 한글 또는 영문으로 15자 보다 크면 경고하고 함수 중단
+				if( subject.length>15 ){								/// 문자열 패턴 검사할 필요 X.따라서 바로 이렇게 해야함.
+					alert("제목은 15자 까지 입력해야합니다.");
+				
+						if( confirm(" 15자 까지만 입력하시겠습니까?") ){ 
+							
+							// 제목에서 15자까지 잘라내어 웹화면에 삽입하기
+							formObj.find(".subject").val( subject.substring(0,15) );			/// String 객체의 메소드. (시작인덱스번호, 끝인덱스번호이전). 0부터 시작하니까 15번째 이전 이라는 의미로 14.
+						
+						}else {
+							formObj.find(".subject").val("");
+						}
+					return;			/// 괜찮은지 안괜찮은지 다시 한 번 확인하기
+	
+				}
+				// 제목이 ""라면 경고하고 함수 중단
+				else if( subject.length==0 ){						/// 겹치지 않는 조건일 경우 else if 라고 쓰지 않아도 상관 x. 그래도 집어넣어주자.
+					alert("제목은 1~15자 까지 입력해야합니다.");
+					return;
+				}
+			
+
+			/// 제목에  script 태그를 못 넣게 해야함
+			if( subject.toUpperCase().indexOf( "script".toUpperCase() )>=0 ){			///	0과 같거나 큼 -> 그렇게 되면 indexOf 안에 있는 문자열이 있다는 뜻. (없으면 -1 리턴.)
+				alert("제목에 <script> 태그가 들어갈 수 없습니다.");
+				formObj.find(".subject").val("");
+				return;
+			}
+			
+			
+			
+			
+			//---------------------------------------------------
+			// 이메일 가져와서 변수 email  에 저장하기
+			var email = formObj.find(".email").val();
 		
-		function regFormCheck(){
+			// 이메일 형식이 아니면 경고하고 함수 중단
+			regExp = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');		/// 같은 이름의 변수를 같은 자료형으로 2번 이상 선언할 수 있음. (좋은 건 아님..)
+			
+			if( regExp.test(email)==false ){
+				alert("이메일 형식이 아닙니다. 재입력 해야합니다.");
+				formObj.find(".email").val("");
+				
+				return;
+			}	
+			
+			//---------------------------------------------------
+			// 내용 가져와서 변수 content  에 저장하기
+			var content = formObj.find(".content").val();
+
+			// 만약에 subject 변수안의 데이터가 String 이 아니면 "" 저장하기
+			if( typeof(content)!="string" ){content = ""; }		/// String 객체가 들어왔는지 확인하는 절차 (만약 string 객체가 아니라면 길이가 없는 문자 데이터 넣어주기) 
+		
+			// subject 변수안의 데이터의 앞뒤 공백 제거하기
+			content = $.trim(content);								/// 앞뒤 공백 제거
+			
+			// subject 변수안의 데이터를 웹화면에 삽입하기
+			formObj.find(".content").val(content);						/// 자스 안의 데이터가 앞뒤 공백 제거된 것. 그러니 변수 안의 데이터에도 공백 제거한 것 넣어주기
+		
+				// 내용이 한글 또는 영문으로 15자 보다 크면 경고하고 함수 중단
+				if( content.length>2000 ){								/// 문자열 패턴 검사할 필요 X.따라서 바로 이렇게 해야함.
+					alert("내용은 2000자 까지 입력해야합니다.");
+					if( confirm(" 15자 까지만 입력하시겠습니까?") ){ 
+						
+						// 내용에서 15자까지 잘라내어 웹화면에 삽입하기
+						formObj.find(".content").val( content.substring(0,2000) );			/// String 객체의 메소드. (시작인덱스번호, 끝인덱스번호이전). 0부터 시작하니까 15번째 이전 이라는 의미로 14.
+					
+					}else {
+						formObj.find(".content").val("");
+					}
+					return;			/// 괜찮은지 안괜찮은지 다시 한 번 확인하기
+		
+				}
+				// 내용이 ""라면 경고하고 함수 중단
+				else if( content.length==0 ){						/// 겹치지 않는 조건일 경우 else if 라고 쓰지 않아도 상관 x. 그래도 집어넣어주자.
+					alert("내용은 1~2000자 까지 입력해야합니다.");
+					return;
+				}
+			
+	
+			/// 내용에  script 태그를 못 넣게 해야함
+			if( content.toUpperCase().indexOf( "script".toUpperCase() ) >=0 ){			///	0과 같거나 큼 -> 그렇게 되면 indexOf 안에 있는 문자열이 있다는 뜻. (없으면 -1 리턴.)
+				alert("내용에 <script> 태그가 들어갈 수 없습니다.");
+				formObj.find(".content").val("");
+				return;
+			}		
+			
+			
+			
+			
+			//---------------------------------------------------
+			// 암호 가져와서 변수 pwd  에 저장하기
+			var pwd = formObj.find(".pwd").val();
+			// 암호가 영문/숫자로 구성되고 네글자 보다 크면 경고하고 함수 중단
+			regExp = new RegExp(/^[0-9a-z]{4}$/);		
+			
+			if( regExp.test(pwd)==false ){
+				alert("암호 형식이 아닙니다. 재입력 해야합니다.");
+				formObj.find(".pwd").val("");
+				
+				return;
+			}	
+			 
+			
+			
+			
+
 			
 			// 비동기 방식으로 웹서버에 접속하여 게시판 [새 글 쓰기] 관련 입력양식의 데이터 전송
 			 	$.ajax({
@@ -81,7 +218,7 @@
 							
 						
 				 }) // ajax 끝나는 곳
-			 } // function regFormCheck 끝나는 곳
+			 } // function BoardregBtnCheck 끝나는 곳
 	
 		
 </script>
