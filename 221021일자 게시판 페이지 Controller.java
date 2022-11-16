@@ -114,9 +114,22 @@ private BoardService boardService;
 		
 		@ResponseBody
 		public int boardRegProc(	
-			BoardDTO boardDTO ){
-		int boardRegCnt = this.boardDAO.insertBoard( boardDTO );	
-		return boardRegCnt;
+			BoardDTO boardDTO 
+			, BindingResult bindingResult
+		){
+		int boardRegCnt = 0;
+			
+		String msg = check_BoardDTO( boardDTO, bindingResult );
+			if( msg!=null &&  msg.equals("") ) {	
+				boardRegCnt = this.boardDAO.insertBoard( boardDTO );
+			}
+			
+		// 이 HashMap 객체는 비동기 방식으로 접속하는 웹브라우저에게 던져줄 데이터이다.			
+		Map<String,String> response_map = new HashMap<String,String>();
+			// HashMap 객체에 경고문자 저장하기. 
+			response_map.put("msg", msg);
+			response_map.put("boardRegCnt", boardRegCnt+"");
+			return response_map;
 		}
 		
 		
@@ -202,6 +215,40 @@ private BoardService boardService;
 				return deleteBoardcnt;		
 	
 			}		
-				
+
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	// 게시판 입력 또는 수정 시 게시판 입력글의 입력양식의 유효성을 검사하고 
+	// 문제가 있으면 경고 문자를 리턴하는 메소드 선언.
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm	
+	public String check_BoardDTO( BoardDTO boardDTO, BindingResult bindingResult, String upRegMode  ) {
 		
-}
+		String msg = "";			/// 경고문구를 담을 변수 선언. 현재는 길이가 없는 문자데이터
+		
+		
+		// BoardDTO 객체에 저장된 데이터의 유효성 체크할 BoardValidator 객체 생성하기
+		// BoardValidator 객체의 validate 메소드 호출하여 유효성 체크 실행하기.
+		
+		///  BoardValidator 객체는 개발자가 생성함. 그러나 스프링이 제공하는 Validator 라는 인터페이스를 구현하여 인위적으로 유효성 체크 
+		///  		-> 이를 통해 획일화된 코딩을 통해 유효성 체크를 할 수 있게 됨.
+		BoardValidator boardValidator = new BoardValidator( upRegMode );
+		boardValidator.validate(
+				boardDTO					// 유효성 체크할 DTO 객체
+				,bindingResult					// 유효성 체크 결과를 관리하는 BindingResult 객체   (Error 객체를 관리함 )
+				);
+		
+		// 만약 BindingResult 객체의 hasErrors() 메소드 호출하여 true 값을 얻으면
+		if( bindingResult.hasErrors() ) {		/// hasErrors() 라는 메소드를 호출했을 때 true?   == 그 말인 즉슨 bindingResult 객체 안에 뭔가 error 가 발생했다는 뜻이다.
+												/// hasErrors() 		"				  false?  == 에러 없음~ 유효성체크 통과~
+			
+			// 변수 msg 에 BoardValidator 객체에 저장된 경고문구 얻어 저장하기
+			msg = bindingResult.getFieldError().getCode();
+		}
+		
+		// [msg] 안의 문자 리턴하기
+		return msg;								/// 유효성 체크에 걸리지 않았을 경우 길이가 없는 문자데이터를 return함.
+	}	
+	
+	
+	-
+		
+}  // BoardController 끝
