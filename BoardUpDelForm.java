@@ -238,7 +238,26 @@
     /// 삭제는 유효성 체크 필요 X.
 		function CheckBoardDelForm(){
 				 
+			var formObj = $("[name='boardUpDelForm']");	 
+			//---------------------------------------------------
+			// 암호 가져와서 변수 pwd  에 저장하기		
+			//---------------------------------------------------
+			var pwd = formObj.find(".pwd").val();
+	
+			/// 수정시 암호에 대한 구체적인 조건을 나열할 필요가 없으므로 암호에 대해 자세히 설명하지 않아야함.
+			/// 최소한 암호가 들어있는지 정도만 확인하면 됨.
+			if(typeof(pwd)!= "string" )	{ pwd==""; }	
+			pwd = $.trim(pwd);
+			formObj.find(".pwd").val(pwd);
 			
+			if( pwd=="" ){				
+				alert("암호를 입력하세요.");
+				formObj.find(".pwd").val("");
+				
+				return;
+			}	
+				
+				
 			// 삭제 여부를 물어보기
 			if( confirm("정말 삭제하시겠습니까?") == false ){ return ;}
 
