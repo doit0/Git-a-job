@@ -40,7 +40,7 @@
 		// 유효성 체크. 비동기 방식으로 웹서버에 접속하는 함수 선언
 		//*********************************************************************
 		function BoardregBtnCheck(){
-				
+		/*		
 			//---------------------------------------------------
 			// 게시판 [새 글 쓰기] 또는 [댓글 쓰기] 관련 입력양식의 유효성 체크하기
 			// 	boardRegForm writer		subject		email		content		pwd
@@ -175,10 +175,11 @@
 			}	
 			 
 			
-			
+	*/		
 			
 
-			
+				if (confirm("${empty param.mom_b_no?'새글':'댓글'}을 정말 쓰시겠습니까?") == false) { return;}
+				
 			// 비동기 방식으로 웹서버에 접속하여 게시판 [새 글 쓰기] 관련 입력양식의 데이터 전송
 			 	$.ajax({
         
@@ -193,8 +194,14 @@
 				 		
 
 						// 웹서버와 통신한 후 웹서버의 응답을 성공적으로 받았을 경우 실행할 익명함수 설정.		
-					 	, success:function( regCnt ){		
-							if( regCnt ==1){
+					 	, success:function( json ){	
+						
+						// 웹서버가 응답해준 JSON 객체에서 경고 문구 꺼내서 변수 msg에 저장하기
+						// 입력된 행의 개수 꺼내서 변수  boardRegCnt 에 저장하기
+						
+						var msg = json["msg"];
+						var boardRegCnt = json["boardRegCnt"];						
+							if( msg=="" && boardRegCnt==1 ){
 								alert("${empty param.mom_b_no?'새글':'댓글'}  쓰기 성공!")
 									if (confirm("${empty param.mom_b_no?'새글':'댓글'}을 정말 쓰시겠습니까?") == false){
 										location.replace("/boardList.do");  
@@ -206,7 +213,7 @@
 							}
 								// 웹서버에 "/boardList.do" 주소로 접속 시도	
 								else{
-									alert("${empty param.mom_b_no?'새글':'댓글'} 쓰기 실패! 아이디 또는 암호가 틀립니다. 재입력 해주십시오!")
+									alert(  msg +  ".{empty param.mom_b_no?'새글':'댓글'} 쓰기 실패! 아이디 또는 암호가 틀립니다. 재입력 해주십시오!")
 						
 								}
 					 	}
