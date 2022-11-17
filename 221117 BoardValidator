@@ -1,0 +1,237 @@
+package com.naver.erp;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
+import java.util.regex.Pattern;
+
+//MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+//BoardDTO 객체에 저장된 데이터의 유효성 체크할 BoardValidator 클래스 선언하기
+//MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+public class BoardValidator implements Validator {				/// Validator: 합당성체크(유효성체크)
+
+	
+
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	//  유효성 체크할 데이터가 저장된 DTO 객체의 클래스 타입 정보 얻어 리턴하기
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	@Override
+	public boolean supports(Class<?> arg0) {				/// supports : Validator의 메소드
+		return BoardDTO.class.isAssignableFrom(arg0);   	// 유효성 체크할 객체의 클래스 타입 정보 (  BoardDTO의 정보 )
+	}
+
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	//  유효성 체크할 메소드 선언하기
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	@Override
+	public void validate(
+		Object obj						// DTO 객체 저장 매개변수   	( BoardController 에서 메소드 check_BoardDTO의 매개변수  boardDTO )
+		, Errors errors					// 유효성 검사시 발생하는 에러를 관리하는 Errors 객체 저장 매개변수  ( BoardController 에서 메소드 check_BoardDTO의 매개변수 bindingResults 지만.. bindingResults 쓰지 말고~ Error 객체 사용~)
+			
+	) {
+		try {
+			
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// 유효성 체크할 DTO 객체 얻기			(형변환!! 한 BoardDTO 객체가 들어옴)
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			BoardDTO dto =  (BoardDTO)obj;
+
+
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// ValidationUtils 클래스의 rejectIfEmptyOrWhitespace 메소드 호출하여
+			// 			BoardDTO 객체의 속성변수명 writer 가 비거나 공백으로 구성되어 있으면
+			// 			경고 메세지를 Errors 객체에 저장하기
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			ValidationUtils.rejectIfEmptyOrWhitespace(	/// writer 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
+					errors								                   // Errors 객체
+					, "writer"						                   // BoardDTO 객체의 속성변수명
+					, "작성자명 입력 요망"		            		// BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
+				);
+			
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "writer" 에 저장된 데이터가 ( 한글 + 2~10)인데
+			// 이것을 위반했다면
+			
+			// Errors 객체에 속성변수명 "writer" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			if( Pattern.matches("^[가-힣]{2,10}$", dto.getWriter() ) == false ) {			/// 자바에선 문자열 사이 정규표현식이 슬래시(/) 사이가 아닌 더블쿼츠(") 안에서 사용해야한다.
+				errors.rejectValue("writer", "작성자명은 2~10개 입니다. 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
+			}
+			
+			
+			//******************************************
+			//******************************************
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// ValidationUtils 클래스의 rejectIfEmptyOrWhitespace 메소드 호출하여
+			// 			BoardDTO 객체의 속성변수명 subject 가 비거나 공백으로 구성되어 있으면
+			// 			경고 메세지를 Errors 객체에 저장하기
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			ValidationUtils.rejectIfEmptyOrWhitespace(	/// writer 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
+					errors								// Errors 객체
+					, "subject"							// BoardDTO 객체의 속성변수명
+					, "제목 입력 요망"					// BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
+				);
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "subject" 에 저장된 데이터가  1~15자 인데
+			// 이것을 위반했다면
+			
+			// Errors 객체에 속성변수명 "subject" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			String subject = dto.getSubject();
+			
+			if( subject == null ) { subject = ""; }													/// ★★ String 객체 에 들어오는 값이 null이 아니라는 걸 항상 확인하기!!! null일 경우 항상 "" 리턴
+			if( Pattern.matches("^.{1,15}$", subject ) == false ) {			    /// 자바에선 문자열 사이 정규표현식이 슬래시(/) 사이가 아닌 더블쿼츠(") 안에서 사용해야한다.
+				errors.rejectValue("subject", "제목은 1~15자 입니다. 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
+			}		
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "subject" 저장된 데이터 안에 "<script>" 또는 "<SCRIPT>" 가 들어있을 때
+			// Errors 객체에 속성변수명 "subject" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			if( Pattern.matches(".*<script>.*", subject)  ||  Pattern.matches("<SCRIPT>", subject)   ){			/// 해당 조건이 들어있을 경우. ( <script> 가 있을 경우, 어디든지 <script>가 있기만 하면되니까 ^$가 필요없다 ) 정규표현식에서 유효성체크해버리는 방법.
+				errors.rejectValue("subject", "제목에는 <script> 단어가 들어갈 수 없습니다. 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
+			}	
+			
+			/*  위 코딩  if( Pattern.matches("^.{1,15}$", subject ) == false ) {~}   은   아래처럼 가능하다.
+			 * 
+					if( subject.length() > 15) {		/// String 객체의 속성변수인 length() 사용.   
+						errors.rejectValue("subject", "제목은 1~15자 입니다. 재입력 요망~");
+					}
+					
+					
+					if( subject.toUpperCase().indexOf( "<SCRIPT>" )>=0 ){	
+						errors.rejectValue("subject", "제목에는 <script> 단어가 들어갈 수 없습니다. 재입력 요망~");
+					}
+					혹은 if( subject.indexOf( "<script>") )>=0  || subject.indexOf( "<SCRIPT>") )>=0  ){	
+						errors.rejectValue("subject", "제목에는 <script> 단어가 들어갈 수 없습니다. 재입력 요망~");
+					}
+			*/
+			
+			
+			//******************************************
+			//******************************************
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// ValidationUtils 클래스의 rejectIfEmptyOrWhitespace 메소드 호출하여
+			// 			BoardDTO 객체의 속성변수명 content 가 비거나 공백으로 구성되어 있으면
+			// 			경고 메세지를 Errors 객체에 저장하기
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			ValidationUtils.rejectIfEmptyOrWhitespace(	/// writer 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
+					errors															// Errors 객체
+					, "content"												  // BoardDTO 객체의 속성변수명
+					, "내용 입력 요망"								  // BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
+				);
+			
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "content" 에 저장된 데이터가  1~15자 인데
+			// 이것을 위반했다면
+			
+			// Errors 객체에 속성변수명 "content" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			String content = dto.getContent() ;
+			
+			if( content==null ) { content = ""; }								                       /// ★★ String 객체 에 들어오는 값이 null이 아니라는 걸 항상 확인하기!!! null일 경우 항상 "" 리턴
+			if( Pattern.matches("^.{1,500}$", content ) == false ) {			            /// 자바에선 문자열 사이 정규표현식이 슬래시(/) 사이가 아닌 더블쿼츠(") 안에서 사용해야한다.
+				errors.rejectValue("content", "내용은 1~500자 입니다. 재입력 요망~");		 ///  Errors 객체의 메소드 rejectValue
+			}		
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "content" 저장된 데이터 안에 "<script>" 또는 "<SCRIPT>" 가 들어있을 때
+			// Errors 객체에 속성변수명 "content" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			if( Pattern.matches(  ".*<script>.*", content)  ||  Pattern.matches( "<SCRIPT>", content )   ){					/// 해당 조건이 들어있을 경우. ( <script> 가 있을 경우, 어디든지 <script>가 있기만 하면되니까 ^$가 필요없다 ) 정규표현식에서 유효성체크해버리는 방법.
+				errors.rejectValue("content", "내용에는 <script> 단어가 들어갈 수 없습니다. 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
+			}			
+			
+			
+			//******************************************
+			//******************************************
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// ValidationUtils 클래스의 rejectIfEmptyOrWhitespace 메소드 호출하여
+			// 			BoardDTO 객체의 속성변수명 email 가 비거나 공백으로 구성되어 있으면
+			// 			경고 메세지를 Errors 객체에 저장하기
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			ValidationUtils.rejectIfEmptyOrWhitespace(	/// email 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
+					errors																	// Errors 객체
+					, "email"												       	// BoardDTO 객체의 속성변수명
+					, "이메일 입력 요망"										 // BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
+				);
+			
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "email" 에 저장된 데이터가 ( [a-z0-9]+@[a-z]+\\.[a-z]{2,3} )인데
+			// 이것을 위반했다면
+			
+			// Errors 객체에 속성변수명 "email" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			String email = dto.getEmail() ;
+			if( email == null ) { email = ""; }	
+			if( Pattern.matches("^[a-z0-9]+@[a-z]+\\.[a-z]{2,3}$", email ) == false ) {			/// 자바에선 문자열 사이 정규표현식이 슬래시(/) 사이가 아닌 더블쿼츠(") 안에서 사용해야한다.
+				errors.rejectValue("email", "이메일 형식이 아닙니다~ 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
+			}
+			
+			
+			
+			//******************************************
+			//******************************************
+		
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// ValidationUtils 클래스의 rejectIfEmptyOrWhitespace 메소드 호출하여
+			// 			BoardDTO 객체의 속성변수명 pwd 가 비거나 공백으로 구성되어 있으면
+			// 			경고 메세지를 Errors 객체에 저장하기
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			
+			ValidationUtils.rejectIfEmptyOrWhitespace(	/// pwd 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
+					errors								// Errors 객체
+					, "pwd"							// BoardDTO 객체의 속성변수명
+					, "암호 입력 요망"				// BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
+				);
+			
+			
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+			// BoardDTO 객체의 속성변수명 "pwd" 에 저장된 데이터가 ( 숫자/영문 + 4)인데
+			// 이것을 위반했다면
+			
+			// Errors 객체에 속성변수명 "pwd" 와 경고 메세지 저장하기
+			// 이 때 문자열 패턴 검사는 >> Pattern 클래스의 matches 메소드 << 를 이용한다.
+			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
+			String pwd = dto.getPwd() ;
+			if( pwd == null ) { pwd = ""; }	
+			if( Pattern.matches("^[0-9a-z]{4}$", pwd ) == false ) {						/// 자바에선 문자열 사이 정규표현식이 슬래시(/) 사이가 아닌 더블쿼츠(") 안에서 사용해야한다.
+				errors.rejectValue("pwd", "암호는 4글자 입니다. 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
+			}
+			
+
+			//******************************************
+			//******************************************
+			
+			
+			
+		}catch(Exception ex) {
+			System.out.println("boardController.validate 메소드 실행 시 예외 발생~");
+		}
+
+		
+		
+	}	// 메소드 validate 끝나는 곳
+	
+}// 전부 끝나는 곳
+
+
