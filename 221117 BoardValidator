@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 public class BoardValidator implements Validator {				/// Validator: 합당성체크(유효성체크)
 
 	
-
+	public BoardValidator( String upRegMode ) {			/// 오버라이딩할 수 없는 validate 메소드가 아닌 다른 생성자 만들기.
+		this.upRegMode = upRegMode;
+	}
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 	//  유효성 체크할 데이터가 저장된 DTO 객체의 클래스 타입 정보 얻어 리턴하기
 	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -197,13 +199,13 @@ public class BoardValidator implements Validator {				/// Validator: 합당성�
 			// 			BoardDTO 객체의 속성변수명 pwd 가 비거나 공백으로 구성되어 있으면
 			// 			경고 메세지를 Errors 객체에 저장하기
 			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn	
-			
-			ValidationUtils.rejectIfEmptyOrWhitespace(	/// pwd 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
-					errors								// Errors 객체
-					, "pwd"							// BoardDTO 객체의 속성변수명
-					, "암호 입력 요망"				// BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
-				);
-			
+			if( upRegMode.equals("reg") ) {
+				ValidationUtils.rejectIfEmptyOrWhitespace(	/// pwd 안에 어떤 게 들어가도 상관 없다면 이걸 사용해도 됨. 하지만 다른 자세한 패턴화된 조건이 붙기 시작한다면..? 바깥으로 빼서 해야함.
+						errors								// Errors 객체
+						, "pwd"							// BoardDTO 객체의 속성변수명
+						, "암호 입력 요망"				// BoardDTO 객체의 속성변수명이 비거나 공백으로 구성되어 있을 때의 경고 문구
+					);
+
 			
 			//nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
 			// BoardDTO 객체의 속성변수명 "pwd" 에 저장된 데이터가 ( 숫자/영문 + 4)인데
@@ -217,7 +219,7 @@ public class BoardValidator implements Validator {				/// Validator: 합당성�
 			if( Pattern.matches("^[0-9a-z]{4}$", pwd ) == false ) {						/// 자바에선 문자열 사이 정규표현식이 슬래시(/) 사이가 아닌 더블쿼츠(") 안에서 사용해야한다.
 				errors.rejectValue("pwd", "암호는 4글자 입니다. 재입력 요망~");		///  Errors 객체의 메소드 rejectValue
 			}
-			
+		}
 
 			//******************************************
 			//******************************************
