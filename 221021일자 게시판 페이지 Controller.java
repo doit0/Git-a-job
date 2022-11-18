@@ -119,7 +119,7 @@ private BoardService boardService;
 		){
 		int boardRegCnt = 0;
 			
-		String msg = check_BoardDTO( boardDTO, bindingResult );
+		String msg = check_BoardDTO( boardDTO, bindingResult, "reg" );
 			if( msg!=null &&  msg.equals("") ) {	
 				boardRegCnt = this.boardDAO.insertBoard( boardDTO );
 			}
@@ -185,7 +185,55 @@ private BoardService boardService;
 		}
 		
 		
+		//**************************************************
+		// /boardUpProc2.do 로 접근하면 호출되는 메소드 선언		/// [수정하기]에 관련된 모든 데이터를 들고 오는 메소드
+		//**************************************************
+		@RequestMapping ( 									/// 비동기방식으로 접속하는 방법.
+				value="/boardUpProc2.do"						/// 웹브라우저에서 유효성체크를 하지 않을 때 사용할 URL 주소				
+				, method=RequestMethod.POST							
+				, produces="application/json;charset=UTF-8"		
+				)
 		
+		@ResponseBody
+		public Map<String,String> boardUpProc2(							/// 비동기방식으로 접속하는 방법.  ( @ResponseBody )	/// **** 댓글은 누군가를 밀어내서 update가 일어난 후 insert 가 나와야함. 	
+				//**************************************
+				// 파라미터값을 저장할 [BoardDTO 객체]를 매개변수로 선언
+				//**************************************
+				
+				BoardDTO boardDTO							/// boardDTO 같은 수정물이 다 들어와야함.삭제할 때만 pk 번호 필요
+				//*******************************************
+				// Error 객체를 관리하는 BindingResult 객체가 저장되어 들어오는 매개변수 bindingResult 선언
+				// 매개변수에 BindingResult 객체가 있으면 내부에서 유효성 체크 코드가 나온다.
+				
+				/// 해당 코드는 다른 코드에서도 사용하니... 메소드를 빼고 클래스 
+				//*******************************************
+			, BindingResult bindingResult		/// BindingResult 객체의 메위주를 매개변수 bindingResult 에 넣음.   스프링에서 유효성 체크가 쉽도록 BindingResult 객체를 제공해줌.
+			
+		) {			
+			
+			
+			int boardUpCnt =0;
+			//*******************************************
+			// 동료메소드 check_BoardDTO를 호출하여 [유효성 체크]하고 경고문자 얻기
+			//*******************************************			
+			String msg = check_BoardDTO( boardDTO, bindingResult, "up"  );			/// check_BoardDTO 라는 동료메소드 를 update 할 때 호출.
+			
+			//*******************************************
+			// 만약 msg 안에 "" 가 저장되어 있으면, 즉 유효성 체크를 통과했으면
+			//*******************************************
+			if( msg!=null &&  msg.equals("") ) {
+				
+				// System.out.println("boardDTO getB_no =>" + boardDTO.getB_no() );
+				
+				//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+				// [BoardDAOImpl 객체]의 insertBoard 메소드 호출로 
+				// 게시판 글 입력하고 [게시판 입력 적용행의 개수] 얻기
+				//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@			/// 새글쓸 때는 DAO 로 바로 가도 됐지만 댓글쓰기는 Service 클래스를 들러야한다. 따라서 이를 변경한다.
+				boardUpCnt = this.boardService.updateBoard( boardDTO );				/// insertBoard의 매개변수로 다량의 데이터를 담고 있는 boardDTO. DB 연동할 때 그냥 넘겨주면 됨.
+																					/// boardDAO 인터페이스를 오버라이딩한 메소드가 아니여서 에러가 터짐.
+																					
+																					/// 웹서버에서 유효성 체크를 한 후 경고문자를 받아야함 현재 입력 적용행의 개수를 얻어버림. 따라서 에러가남.
+			}			
 		
 		
 		
