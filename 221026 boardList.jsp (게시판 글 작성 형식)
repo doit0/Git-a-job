@@ -23,6 +23,37 @@
 		 $(".newRegBtn").bind("click",function(){
 				// location.replace("/boardRegForm.do" );				
 		 
+		 
+					var formObj1 = $("[name=boardSearchForm]");				/// form 태그 안에 있는 모든 입력양식 값들을 다 가지고 와야함
+					var formObj2 = $("[name=boardRegForm]");
+				
+					/// 이런 과정으로 boardSearchForm 안에 있는 입력양식들을 boardRegForm에 담는 과정 (일종의 복사 같은 거임)
+					
+					formObj2.find(".selectPageNo").val(
+							formObj1.find(".selectPageNo").val()
+					);
+					formObj2.find(".rowCntPerPage").val(
+							formObj1.find(".rowCntPerPage").val()
+					);
+					
+					
+					formObj2.find(".keyword1").val(							
+							formObj1.find(".keyword1").val()
+					);
+
+					formObj2.find(".keyword2").val(
+							formObj1.find(".keyword2").val()
+					);
+					formObj2.find(".or_And").val(
+							formObj1.find(".or_And").val()
+					);
+		 
+		 
+		 
+		 
+		 
+		 
+		 
 				
 				// name=boardRegForm 을 가진 form 태그의 action 값 설정하기
 				document.boardRegForm.action="/boardRegForm.do" ;
@@ -258,6 +289,29 @@
 			
 			// location.replace("/BoardDetailForm.do" );			/// 게시판의 상세보기 화면으로 가는 코드   
 			// get 방식을 사용하면 location.replace("/BoardDetailForm.do?b_no="+b_no ); 를 해야함. (form 태그 안만들어도 되는 장점이 있음, 대신 pk 값을 url 주소 뒤에 같이 보내게 됨.)
+		
+			var formObj1 = $("[name=boardSearchForm]");
+			var formObj2 = $("[name=boardDetailForm]");
+			
+			formObj2.find(".keyword1").val(							/// 이런 과정으로 boardSearchForm 안에 있는 입력양식들을 boardRegForm에 담는 과정 (일종의 복사 같은 거임)
+					formObj1.find(".keyword1").val()
+			);
+			formObj2.find(".keyword2").val(
+					formObj1.find(".keyword2").val()
+			);
+			
+			formObj2.find(".selectPageNo").val(
+					formObj1.find(".selectPageNo").val()
+			);
+			formObj2.find(".rowCntPerPage").val(
+					formObj1.find(".rowCntPerPage").val()
+			);
+			
+			formObj2.find(".or_And").val(
+					formObj1.find(".or_And").val()
+			);
+		
+		
 		
 			$("[name='boardDetailForm'] [name='b_no']").val(b_no);		/// hidden 태그는 화면에 출력되지 않는다는 보안성이 있어서 신경써야함.
 			
@@ -792,11 +846,27 @@
 		
 	
 	<form name="boardRegForm" >   <!-- URL 주소인 action 값이 없어도 위에서 줄 수 있음. (document.boardRegForm.action="/boardRegForm.do"; 처럼) -->
+		<input type="hidden" name="keyword1" class="keyword1" value="">						<!--  여기 담기는 입력양식태그들은 웹서버로 값을 보내기만!! 해야하니까 hidden으로 타입을 바꿔주기 -->
+		<input type="hidden" name="selectPageNo" class="selectPageNo" value="">
+		<input type="hidden" name="rowCntPerPage" class="rowCntPerPage" value="">
+		
+		<input type="hidden" name="keyword2" class="keyword2" value="">
+		<input type="hidden" name="or_And" class=or_And value="">
+	
 	</form>
 	
 
 	<form name="boardDetailForm" method="post" action="/boardDetailForm.do">
 		<input type="hidden" name="b_no"> 
+		
+		<input type="hidden" name="keyword1"     value="${param.keyword1}">						<!--  여기 담기는 입력양식태그들은 웹서버로 값을 보내기만!! 해야하니까 hidden으로 타입을 바꿔주기 -->
+		<input type="hidden" name="selectPageNo"  value="${param.selectPageNo}">				<!--  EL 태그를 value 값으로 넣어줌 → 검색화면에서 검색조건 다시 보여줌 -->
+		<input type="hidden" name="rowCntPerPage" value="${param.rowCntPerPage}">
+		
+		<input type="hidden" name="keyword2"  value="${param.keyword2}">
+		<input type="hidden" name="or_And" value="${param.or_And}">
+		
+		
 	</form>
 
 	
