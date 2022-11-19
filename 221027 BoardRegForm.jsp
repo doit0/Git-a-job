@@ -306,7 +306,23 @@
 		</form>
 		
 		
-		<form name="boardListForm" method="post" action="/boardList.do">  </form>
+		<form name="boardListForm" method="post" action="/boardList.do"> 
+			
+		<form name="boardListForm" method="post" action="/boardList.do"> <!-- [목록보기] 누르면 → 검색화면 으로 갈 때 검색조건을 계속 담고 있어야하는 입력양식을.. 넣어야함 -->
+		
+					<input type="hidden" name="keyword1"  value="${param.keyword1}">						<!--  여기 담기는 입력양식태그들은 웹서버로 값을 보내기만!! 해야하니까 hidden으로 타입을 바꿔주기 -->
+					<input type="hidden" name="keyword2" value="${param.keyword2}">
+					
+				
+				 	<input type="hidden" name="or_And" 		class="or_And" 	value="${param.or_And}">
+				 	<input type="hidden" name="selectPageNo"   class="selectPageNo"   value="${param.selectPageNo}">				<!--  EL 태그를 value 값으로 넣어줌 → 검색화면에서 검색조건 다시 보여줌 -->
+					<input type="hidden" name="rowCntPerPage" class="rowCntPerPage"    value="${param.rowCntPerPage}">
+				 	
+
+		
+		
+		
+		</form>
 		
 </center>
 </body>
