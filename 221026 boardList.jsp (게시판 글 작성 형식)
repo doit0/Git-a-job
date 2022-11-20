@@ -852,7 +852,23 @@
 		
 		<input type="hidden" name="keyword2" class="keyword2" value="">
 		<input type="hidden" name="or_And" class=or_And value="">
+		<div style = "display:none">				 	
+					<input type="checkbox" name="date" class="date" value="-0">	오늘
+					<input type="checkbox" name="date" class="date" value="-1">	어제
+					<input type="checkbox" name="date" class="date" value="-2">	그제				 	
+						<br/>
+				</div>
 	
+
+		<input type="hidden" name="min_year"  class="min_year">
+		<input type="hidden" name="min_month" class="min_month">
+		<input type="hidden" name="max_year" class="max_year">
+		<input type="hidden" name="max_month" class="max_month">
+
+		<input type ="hidden" name="min_year_month" class="min_year_month" >			<!-- min_year +  minmonth -01(날짜) 이런식으로 붙여서 사용할 수 있는 태그 따로 만들기-->
+		<input type ="hidden" name="max_year_month" class="max_year_month" > 
+		<input type ="hidden" name="sort" class="sort" >		 	
+				 		
 	</form>
 	
 
@@ -866,6 +882,23 @@
 		<input type="hidden" name="keyword2"  value="${param.keyword2}">
 		<input type="hidden" name="or_And" value="${param.or_And}">
 		
+									
+		<div style = "display:none">
+			<input type="checkbox" name="date" class="date" value="-0">	오늘
+			<input type="checkbox" name="date" class="date" value="-1">	어제
+			<input type="checkbox" name="date" class="date" value="-2">	그제				 	
+				<br/>
+		</div>
+	
+				 	
+		<input type="hidden" name="min_year"  class="min_year" >
+		<input type="hidden" name="min_month" class="min_month">
+		<input type="hidden" name="max_year" class="max_year">
+		<input type="hidden" name="max_month" class="max_month">
+
+		<input type ="hidden" name="min_year_month" class="min_year_month"  >			<!-- min_year +  minmonth -01(날짜) 이런식으로 붙여서 사용할 수 있는 태그 따로 만들기-->
+		<input type ="hidden" name="max_year_month" class="max_year_month"  > 
+		<input type ="hidden" name="sort" class="sort" >				
 		
 	</form>
 
