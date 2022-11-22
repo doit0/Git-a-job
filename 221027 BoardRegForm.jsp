@@ -318,10 +318,19 @@
 				 	<input type="hidden" name="selectPageNo"   class="selectPageNo"   value="${param.selectPageNo}">				<!--  EL 태그를 value 값으로 넣어줌 → 검색화면에서 검색조건 다시 보여줌 -->
 					<input type="hidden" name="rowCntPerPage" class="rowCntPerPage"    value="${param.rowCntPerPage}">
 				 	
-
-		
-		
-		
+				<div style = "display:none">
+					<c:forEach var="date" items="${paramValues.date}" > 							
+						<input type="checkbox" name="date"  class="date"  value="${date}" checked>				<!--   value 값으로 !!checked 된 태그!!를 넣어야함. 들어온 value 값에 대한 checkbox 표현만 해주면 됨. -->
+					</c:forEach>																				<!--  파라미터 값으로 들어온 태그에 checked 라고 적으면!! 체크가 된다... 잊지마라. select 태그 안의 option 태그를 체크하려면 selected 를 사용해야한다. -->
+				</div>
+			 <br/>
+			 
+				<input type ="hidden" name="min_year_month" class="min_year_month" value="${param.min_year_month}" >			<!-- min_year +  minmonth -01(날짜) 이런식으로 붙여서 사용할 수 있는 태그 따로 만들기-->
+				<input type ="hidden" name="max_year_month" class="max_year_month" value="${param.max_year_month}" > 
+				 	
+				 	<input type ="hidden" name="sort" class="sort" value="${param.sort}" >	
+				 	
+				
 		</form>
 		
 </center>
