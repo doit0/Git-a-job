@@ -48,8 +48,43 @@
 							formObj1.find(".or_And").val()
 					);
 		 
-		 
-		 
+					formObj2.find(".min_year").val(
+							formObj1.find(".min_year").val()
+					);
+					formObj2.find(".min_month").val(
+							formObj1.find(".min_month").val()
+					);
+					
+					formObj2.find(".max_year").val(
+							formObj1.find(".max_year").val()
+					);
+					formObj2.find(".max_month").val(
+							formObj1.find(".max_month").val()
+					);
+					
+					formObj2.find(".min_year_month").val(
+							formObj1.find(".min_year_month").val()
+					);
+					formObj2.find(".max_year_month").val(
+							formObj1.find(".max_year_month").val()
+					);
+					
+					formObj2.find(".sort").val(
+							formObj1.find(".sort").val()
+					);
+					
+					formObj1.find(".date").each(function(i){					/// 반복문을 사용하나.. 흠...
+						formObj2.find(".date").eq(i).prop(						/// i 를 사용, 
+								"checked"
+								, $(this).is(":checked")						/// boardSearchDTO에 있는 태그 중 
+								
+							)}		 
+				 //---------------------------------------------------------------
+				formObj2.find(".date").val(						/// 반복문을 사용하나.. 흠...
+							formObj1.find(":checked").each(function({
+								formObj1.find(".date").prop("checked", true)
+							})
+					);
 		 
 		 
 		 
