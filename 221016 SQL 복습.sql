@@ -90,3 +90,23 @@ select
 
 from customer c left outer join employee e on c.emp_name = e.emp_name
 where e.dep_no = 10;
+
+--------------------------------------------------------
+-- 고객번호, 고객명, 고객전화번호, 담당직원명, 담당직원직급, 담당직원연봉등급 을 출력하면?
+-- 	 <조건>담당직원이 없는 고객도 포함
+--------------------------------------------------------
+select 
+		c.cus_no		"고객번호"
+		, c.cus_name		"고객명"
+		 ,c.tel_num		"고객전화번호" 
+		 ,e.emp_name		"담당직원명"
+		 ,e.jikup		"담당직원직급"
+		,s.sal_grade_no	"담당직원연봉등급"
+
+	from 
+		customer c, employee e, salary_grade s 
+	where 
+		c.emp_no = e.emp_no(+)	
+		and 	
+			e.salary>= s.min_money(+) and e.salary <= s.max_salary (+)		--- 항상 딸려 나오는 쪽에 붙어야함. 
+		 (e.salary  between s.min_salary(+) and s.max_salary(+) )
