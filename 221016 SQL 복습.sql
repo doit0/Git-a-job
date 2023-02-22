@@ -110,3 +110,18 @@ select
 		and 	
 			e.salary>= s.min_money(+) and e.salary <= s.max_salary (+)		--- 항상 딸려 나오는 쪽에 붙어야함. 
 		 (e.salary  between s.min_salary(+) and s.max_salary(+) )
+
+
+--------------------------------------------------------
+-- 고객번호, 고객명, 고객주민번호 를 출력하면?
+--  단, 연봉이 3000 이상인 담당직원이 담당한 고객이어야 한다.	
+--------------------------------------------------------
+select 
+		c.cus_no		"고객번호"
+		, c.cus_name		"고객명"
+		, c.jumin_num	"고객주민번호" 
+
+	from customer c, employee e							
+	
+	where c.emp_no = e.emp_no and e.salary >=3000 		
+
