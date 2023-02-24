@@ -137,3 +137,46 @@ select
 	from customer c inner join employee e on  c.emp_no = e.emp_no
 	
 	where e.salary >=3000 	
+
+
+--------------------------------------------------------
+-- 고객번호, 고객명, 고객주민번호 를 출력하면?
+-- 단, 40살 이상인 담당직원이 담당한 고객이어야 한다.
+--------------------------------------------------------
+
+-- ANSI join 으로 풀기
+select 
+	c.cus_no 		"고객번호"
+	, c.cus_name 		"고객명"
+	, c.jumin_num		"고객주민번호"
+	
+	from customer c inner join employee e on c.emp_no = e.emp_no 
+	where 
+		to_number( to_char(sysdate, 'YYYY'))
+		-
+		to_number (case substr(e.jumin_num, 7, 1)
+			   when '1' then '19'
+			   when '2' then '19'
+			   else '20'
+			   end)
+			   || substr(e.jumin_num, 1, 2) ) +1
+		>=40
+		
+		
+--------------------------------------------------------		
+select 
+		c.cus_no		"고객번호"		
+		, c.cus_name		"고객명"		
+		, c.jumin_num	"고객주민번호" 
+	from customer c, employee e	
+	where c.emp_no = e.emp_no 
+		and
+			(to_number( to_char(sysdate, 'YYYY') ) 					
+			- 
+			to_number( case substr (e.jumin_num, 7,1)
+						when '1' then '19'
+						when '2' then '19'
+					                       else '20'
+					end
+					||substr(e.jumin_num, 1,2) ) 	+1				
+			) >= 40					
