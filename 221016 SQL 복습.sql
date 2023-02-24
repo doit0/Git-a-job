@@ -180,3 +180,12 @@ select
 					end
 					||substr(e.jumin_num, 1,2) ) 	+1				
 			) >= 40					
+
+
+--------------------------------------------------------
+-- 10번 부서 또는 30번 부서 직원이 담당하는 고객을 검색하면?
+--------------------------------------------------------
+select 
+	c.*
+from customer c , employee e on
+where  c.emp_no = e.emp_no and (e.dep_no = 10 or e.dep_no =30) 
