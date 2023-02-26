@@ -189,3 +189,19 @@ select
 	c.*
 from customer c , employee e on
 where  c.emp_no = e.emp_no and (e.dep_no = 10 or e.dep_no =30) 
+
+
+--------------------------------------------------------
+-- 직원명, 직원전화번호 와  고객명, 고객전화번호를 종으로 붙여 출력하라. 조건은 중복하지 말 것.
+--------------------------------------------------------
+select emp_name "직원명",  	phone	"직원전화번호", 	'직원'	"직원/고객" from employee 			
+	union																		
+	select cus_name "고객명", tel_num "고객전화번호", '고객'	"직원/고객" from customer
+
+
+
+
+
+
+
+
