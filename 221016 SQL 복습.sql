@@ -217,9 +217,30 @@ where salary = (select max(salary) from employee  )
 
 
 --------------------------------------------------------
--- 최고 연봉을 받는 직원을 검색하라.
+-- 평균 연봉을 받는 직원을 검색하라.
 --------------------------------------------------------
 select * from employee 
 where salary = (select avg(salary) from employee  )
+
+
+--------------------------------------------------------
+-- 20번 부서에서 최고 연봉자 직원을 검색하라
+--------------------------------------------------------
+select * from employee 
+where salary = (select  max(salary) from employee where dep_no = 20 ) 
+and dep_no = 20;
+
+
+--------------------------------------------------------
+-- 20번 부서의 최고 연봉자와 동일한 연봉을 받는 모든 직원을 검색하라
+--------------------------------------------------------
+select * from employee 
+where salary = (select  max(salary) from employee dep_no = 20 ) 
+
+
+
+
+
+
 
 
