@@ -235,12 +235,22 @@ and dep_no = 20;
 -- 20번 부서의 최고 연봉자와 동일한 연봉을 받는 모든 직원을 검색하라
 --------------------------------------------------------
 select * from employee 
-where salary = (select  max(salary) from employee dep_no = 20 ) 
+where salary = (select  max(salary) from employee where dep_no = 20 ) 
 
 
 
-
-
+--------------------------------------------------------
+-- [직원명], [직급], [연봉], [전체연봉에서 차지하는 비율]을 검색하라. 
+-- 단 [전체연봉에서 차지하는 비율]은 소수점 버림하고 %로 표현하라
+-- 단 높은 비율이 먼저 나오게 정렬하라
+--------------------------------------------------------
+ select emp_name		
+ 	, dept
+	, floor (salary / (select sum(salary) from employee ) *100) || '%'
+	from employee 
+order by  floor (salary / (select sum(salary) from employee ) *100) desc
+      
+     
 
 
 
