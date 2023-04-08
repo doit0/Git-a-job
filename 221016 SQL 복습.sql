@@ -251,6 +251,29 @@ where salary = (select  max(salary) from employee where dep_no = 20 )
 order by  floor (salary / (select sum(salary) from employee ) *100) desc
       
      
+--------------------------------------------------------
+-- 10번 부서 직원들이 관리하는 [고객번호], [고객명], [담당직원번호] 를 검색하면?		
+--------------------------------------------------------     
+
+select c.cus_name
+	, c.cus_no
+	, e.emp_no
+	from employee e, customer c
+	
+where dep_no = 10
+
+
+
+--- 혹은
+
+
+select cus_name
+	, cus_no
+	, emp_no
+	from customer 
+	
+where emp_no in (select emp_no from employee where dep_no = 10)
+
 
 
 
