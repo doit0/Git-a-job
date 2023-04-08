@@ -275,5 +275,15 @@ select cus_name
 where emp_no in (select emp_no from employee where dep_no = 10)
 
 
+--------------------------------------------------------
+-- 평균 연봉 이상이고 최대 연봉 미만의 [직원명], [연봉], [전체평균연봉], [전체최대연봉]을 출력하면?	
+--------------------------------------------------------     
+select  e.emp_name
+	, salary
+	, (select  avg(salary) from employee)
+	, (select  max(salary) from employee)
+from employee e
+where salary >=  (select  avg(salary) from employee)
+and salary <  (select  max(salary) from employee)
 
 
