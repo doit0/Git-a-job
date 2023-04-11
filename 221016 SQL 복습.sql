@@ -278,12 +278,24 @@ where emp_no in (select emp_no from employee where dep_no = 10)
 --------------------------------------------------------
 -- 평균 연봉 이상이고 최대 연봉 미만의 [직원명], [연봉], [전체평균연봉], [전체최대연봉]을 출력하면?	
 --------------------------------------------------------     
-select  e.emp_name
+select  emp_name
 	, salary
 	, (select  avg(salary) from employee)
 	, (select  max(salary) from employee)
-from employee e
+from employee
 where salary >=  (select  avg(salary) from employee)
 and salary <  (select  max(salary) from employee)
 
+
+
+--------------------------------------------------------
+-- 최고 연봉 직원의 관리하는 [직원번호], [직원명], [부서명], [연봉] 을 검색하면?
+--------------------------------------------------------    
+select e.emp_no			"직원번호"	
+	, e.emp_name		"직원명"
+	, d.dep_name		"부서명"
+	, e.salary		"연봉"
+from employee e, dept d
+where e.dep_no = d.dep_no
+and e.salary = (select max(salary) from employee )
 
