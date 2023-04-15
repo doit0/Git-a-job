@@ -299,3 +299,29 @@ from employee e, dept d
 where e.dep_no = d.dep_no
 and e.salary = (select max(salary) from employee )
 
+
+
+-- or
+
+select   e.emp_no			"직원번호"	
+	, e.emp_name			"직원명"
+	,(select dep_name from dept d where e.dep_no = d.dep_no)		"부서명"
+	, e.salary		"연봉"
+from employee e
+where e.salary = (select max(salary) from employee )
+
+
+
+--------------------------------------------------------
+--  담당 고객이 2명 이상인 [직원번호], [직원명], [직급] 을 검색하면?
+--------------------------------------------------------    
+
+select 
+	e.emp_no
+	, e.emp_name
+	, e.jikup
+
+from employee e
+where (select count(*)  from customer c where c.emp_no = e.emp_no) >= 2
+
+
