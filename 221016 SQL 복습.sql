@@ -325,3 +325,17 @@ from employee e
 where (select count(*)  from customer c where c.emp_no = e.emp_no) >= 2
 
 
+--------------------------------------------------------
+-- [직원번호], [직원명], [연봉], [연봉 순위] 을 출력하면?	 단 [연봉 순위]를 오름차순 유지
+--------------------------------------------------------	
+
+	select
+		e1.emp_no
+		, e1.emp_name
+		, e1.salary
+		, (select count (*)+1 from employee e2 where e2.salary > e1.salary)		
+												
+												
+
+	from employee e1							
+	order by 4;
