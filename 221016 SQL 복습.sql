@@ -339,3 +339,14 @@ where (select count(*)  from customer c where c.emp_no = e.emp_no) >= 2
 
 	from employee e1							
 	order by 4;
+
+--------------------------------------------------------
+-- [직원번호], [직원명], [담당고객수]를 출력하면? 단 담당고객 수를 내림차순으로 
+--------------------------------------------------------    
+select
+	e.emp_no
+	, e.emp_name
+	, (select count(*) from customer c where c.emp_no = e.emp_no )
+
+from employee e
+order by (select count(*) from customer c where c.emp_no = e.emp_no ) desc;
