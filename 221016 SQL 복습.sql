@@ -351,4 +351,14 @@ select
 from employee e
 order by (select count(*) from customer c where c.emp_no = e.emp_no ) desc;
 
+--------------------------------------------------------
+--  [부서명], [부서직원수], [부서담당고객수]를 출력하면? 단 부서직원수가 내림차순
+--------------------------------------------------------    
+select 
+	d.dep_name
+	, (select count(*) from employee e where e.dep_no = d.dep_no)
+	, (select count (*) from customer c where  c.emp_no=e.emp_no and e.dep_no=d.dep_no )
+	
+from dept d
+order by  (select count(*) from employee e where e.dep_no = d.dep_no) desc;
 
