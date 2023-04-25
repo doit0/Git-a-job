@@ -362,3 +362,19 @@ select
 from dept d
 order by  (select count(*) from employee e where e.dep_no = d.dep_no) desc;
 
+
+
+
+--------------------------------------------------------
+-- [고객번호], [고객명], [고객전화번호], [담당직원명], [담당직원직급], [부서번호] 를 출력하면?	<조건>담당직원이 없는 고객도 포함	
+--------------------------------------------------------    
+
+select 
+	c.cus_no
+	, c.cus_name
+	,  c.tel_num	
+	, nvl( (select e.emp_name from employee where c.emp_no = e. emp_no), '없음')
+	, nvl( (select e.jikup from employee where c.emp_no = e. emp_no), '없음')
+	, nvl( (select d.dep_no from dept where c.emp_no = e. emp_no), '없음')
+	
+from customer c
