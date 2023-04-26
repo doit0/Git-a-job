@@ -378,3 +378,38 @@ select
 	, nvl( (select d.dep_no from dept where c.emp_no = e. emp_no), '없음')
 	
 from customer c
+
+
+--------------------------------------------------------
+--  [직원번호], [직원명], [직급], [주민번호], [직급서열순위]를 출력하면?
+--  단, 직급이 같으면 나이 많은 직원이 [직급서열순위]이다. 그리고 [직급서열순위]를 오름차순으로 유지
+--------------------------------------------------------   
+select 
+	e.emp_no
+	, emp_name
+	, jikup
+	, jumin_num
+	, (
+		select count(*) from employee 
+		where decode(e2.jikup where '사장', 1, '부장', 2, '과장', 3, '대리', 4, '주임', 5, 6)
+			<
+			decode (e1.jikup, '사장', 1, '부장', 2, '과장', 3, '대리', 4, '주임', 5, 6)	
+	)
+
+				or 
+			( e2.jikup = e1.jikup			
+					and
+				to_number
+					( decode(  substr(e2.jumin_num, 7,1), '1', '19', '2', '19', '20') ||  substr(e2.jumin_num, 1, 6)
+				)
+				<
+				to_number 
+					( decode(  substr(e1.jumin_num, 7,1), '1', '19', '2', '19', '20') ||  substr(e1.jumin_num, 1, 6)
+				)								
+			)									
+		)  "직급서열순위"
+		--------------------------------------서브쿼리-------------------------------------------
+							
+	from employee e1		
+	order by "직급서열순위";
+
