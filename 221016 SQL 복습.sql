@@ -448,3 +448,18 @@ from employee
   
 group by dep_no, jikup	
 order by 1;
+
+
+
+--------------------------------------------------------
+-- 부서별로 직급별 [부서번호], [직급], [연봉합], [평균연봉], [인원수]를 출력하되 인원수는 3명 이상을 출력하면?	
+-------------------------------------------------------- 
+ 	   select
+		dep_no			"부서번호"
+    		   , jikup			"직급"
+   		     , sum (salary)  		"연봉합"          			
+   		     , round ( avg (salary), 1)      "평균연봉"		
+   		     , count(*)||'명'     		"인원수"
+  	   from employee  
+	group by dep_no, jikup	
+	having 	count(*)>=3			
